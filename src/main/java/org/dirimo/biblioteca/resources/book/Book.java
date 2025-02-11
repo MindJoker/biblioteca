@@ -1,6 +1,7 @@
 package org.dirimo.biblioteca.resources.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Book {
 
     @Id
@@ -44,11 +46,15 @@ public class Book {
     @Column(nullable = false, length = 50)
     private String language;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book")
     @JsonIgnore
     private List<Stock> stock; //liste in ignore
 
     @OneToMany(mappedBy = "book")
     @JsonIgnore
     private List <Reservation> reservation;
+
+
+
+
 }

@@ -1,6 +1,7 @@
 package org.dirimo.biblioteca.resources.area;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Area {
     private String description;
 
     @OneToMany(mappedBy = "area")
+    @JsonIgnore
     private List<Shelf> shelves;
 
 }

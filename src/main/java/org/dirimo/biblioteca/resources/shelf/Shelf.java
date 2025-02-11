@@ -27,7 +27,7 @@ public class Shelf {
     @JoinColumn(name = "area_id")
     private Area area;
 
-    @OneToOne
-    @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
-    private Book book;
+//    @OneToOne
+//    @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
+//    private Book book;
 }

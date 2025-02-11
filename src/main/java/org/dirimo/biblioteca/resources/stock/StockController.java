@@ -26,6 +26,11 @@ public class StockController {
         return stockService.getStockById(id);
     }
 
+    @GetMapping("/book/{id}")
+    public Optional<Stock> getStockByBookId(@PathVariable Long id) {
+        return stockService.findByBookId(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Stock addStock(@RequestBody Stock stock) {

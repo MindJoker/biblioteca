@@ -69,18 +69,10 @@ public class BookService {
 
 
 
-    public Book updateBook(Long id, Book updatedBook) {
-        Book book = bookRepository.findById(id)
+    public Book updateBook(Long id, Book book) {
+        bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Libro con ID " + id + " non trovato"));
-
-        book.setIsbn(updatedBook.getIsbn());
-        book.setTitle(updatedBook.getTitle());
-        book.setAuthor(updatedBook.getAuthor());
-        book.setYear(updatedBook.getYear());
-        book.setGenre(updatedBook.getGenre());
-        book.setPublisher(updatedBook.getPublisher());
-        book.setLanguage(updatedBook.getLanguage());
-
+        book.setId(id);
         return bookRepository.save(book);
     }
 

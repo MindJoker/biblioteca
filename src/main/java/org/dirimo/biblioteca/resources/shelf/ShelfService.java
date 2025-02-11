@@ -23,12 +23,9 @@ public class ShelfService {
         return shelfRepository.save(shelf);
     }
 
-    public Shelf updateShelf(Long id, Shelf updatedShelf) {
-        Shelf shelf = shelfRepository.findById(id)
-                                            .orElseThrow(() -> new RuntimeException("Scaffale Id " + id + " non trovato"));
-        shelf.setName(updatedShelf.getName());
-        shelf.setArea(updatedShelf.getArea());
-        shelf.setBook(updatedShelf.getBook());
+    public Shelf updateShelf(Long id, Shelf shelf) {
+        shelfRepository.findById(id).orElseThrow(() -> new RuntimeException("Scaffale Id " + id + " non trovato"));
+        shelf.setId(id);
         return shelfRepository.save(shelf);
     }
 

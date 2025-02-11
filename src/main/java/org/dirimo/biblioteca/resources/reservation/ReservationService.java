@@ -26,13 +26,14 @@ public class ReservationService {
 
     public Reservation addReservation(Reservation reservation)
     {
+
         return reservationRepository.save(reservation);
     }
 
     public Reservation updateReservation(Long id, Reservation reservation) {
        reservationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prenotazione" + id + "non trovata"));
-
+        reservation.setId(id);
         return reservationRepository.save(reservation);
     }
 
