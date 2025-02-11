@@ -17,23 +17,23 @@ public class StockController {
     private final StockService stockService;
 
     @GetMapping
-    public List<StockEntity> getAllStocks() {
+    public List<Stock> getAllStocks() {
         return stockService.getAllStocks();
     }
 
     @GetMapping("/{id}")
-    public Optional<StockEntity> getStockById(@PathVariable Long id) {
+    public Optional<Stock> getStockById(@PathVariable Long id) {
         return stockService.getStockById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public StockEntity addStock(@RequestBody StockEntity stock) {
+    public Stock addStock(@RequestBody Stock stock) {
         return stockService.addStock(stock);
     }
 
     @PutMapping("/{id}")
-    public StockEntity updateStock(@PathVariable Long id, @RequestBody StockEntity updatedStock) {
+    public Stock updateStock(@PathVariable Long id, @RequestBody Stock updatedStock) {
         return stockService.updateStock(id, updatedStock);
     }
 

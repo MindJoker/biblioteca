@@ -15,21 +15,21 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
 
-    public List<ReservationEntity> getAllReservations() {
+    public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
     }
 
-    public Optional<ReservationEntity> getReservationById(Long id)
+    public Optional<Reservation> getReservationById(Long id)
     {
         return reservationRepository.findById(id);
     }
 
-    public ReservationEntity addReservation(ReservationEntity reservation)
+    public Reservation addReservation(Reservation reservation)
     {
         return reservationRepository.save(reservation);
     }
 
-    public ReservationEntity updateReservation(Long id, ReservationEntity reservation) {
+    public Reservation updateReservation(Long id, Reservation reservation) {
        reservationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prenotazione" + id + "non trovata"));
 

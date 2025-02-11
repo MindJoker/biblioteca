@@ -1,14 +1,13 @@
 package org.dirimo.biblioteca.resources.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dirimo.biblioteca.resources.stock.StockEntity;
-import org.dirimo.biblioteca.resources.reservation.ReservationEntity;
+import org.dirimo.biblioteca.resources.stock.Stock;
+import org.dirimo.biblioteca.resources.reservation.Reservation;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookEntity {
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,9 +46,9 @@ public class BookEntity {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<StockEntity> stock; //liste in ignore
+    private List<Stock> stock; //liste in ignore
 
     @OneToMany(mappedBy = "book")
     @JsonIgnore
-    private List <ReservationEntity> reservation;
+    private List <Reservation> reservation;
 }

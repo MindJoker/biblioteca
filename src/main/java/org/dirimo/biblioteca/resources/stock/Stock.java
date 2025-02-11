@@ -1,11 +1,10 @@
 package org.dirimo.biblioteca.resources.stock;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dirimo.biblioteca.resources.book.BookEntity;
+import org.dirimo.biblioteca.resources.book.Book;
 
 
 @Entity
@@ -14,7 +13,7 @@ import org.dirimo.biblioteca.resources.book.BookEntity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockEntity {
+public class Stock {
 
 
     @Id
@@ -23,7 +22,7 @@ public class StockEntity {
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
-    private BookEntity book;
+    private Book book;
 
     @Column(name = "tot_copies",nullable = false, columnDefinition = "int default 1 not null")
     private int totCopies;

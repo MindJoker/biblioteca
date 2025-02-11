@@ -11,15 +11,15 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    public List<BookEntity> getAllBooks() {
+    public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
-    public Optional<BookEntity> getBookById(Long id) {
+    public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }
 
-    public BookEntity addBook(BookEntity book) {
+    public Book addBook(Book book) {
         return bookRepository.save(book);
     }
 
@@ -69,8 +69,8 @@ public class BookService {
 
 
 
-    public BookEntity updateBook(Long id, BookEntity updatedBook) {
-        BookEntity book = bookRepository.findById(id)
+    public Book updateBook(Long id, Book updatedBook) {
+        Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Libro con ID " + id + " non trovato"));
 
         book.setIsbn(updatedBook.getIsbn());

@@ -11,20 +11,20 @@ public class ShelfService {
 
     private final ShelfRepository shelfRepository;
 
-    public List<ShelfEntity> getAllShelf() {
+    public List<Shelf> getAllShelf() {
         return shelfRepository.findAll();
     }
 
-    public Optional<ShelfEntity> getShelfById(Long id) {
+    public Optional<Shelf> getShelfById(Long id) {
         return shelfRepository.findById(id);
     }
 
-    public ShelfEntity addShelf(ShelfEntity shelf) {
+    public Shelf addShelf(Shelf shelf) {
         return shelfRepository.save(shelf);
     }
 
-    public ShelfEntity updateShelf(Long id, ShelfEntity updatedShelf) {
-        ShelfEntity shelf = shelfRepository.findById(id)
+    public Shelf updateShelf(Long id, Shelf updatedShelf) {
+        Shelf shelf = shelfRepository.findById(id)
                                             .orElseThrow(() -> new RuntimeException("Scaffale Id " + id + " non trovato"));
         shelf.setName(updatedShelf.getName());
         shelf.setArea(updatedShelf.getArea());

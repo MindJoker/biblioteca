@@ -11,22 +11,22 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    public List<StockEntity> getAllStocks(){
+    public List<Stock> getAllStocks(){
         return stockRepository.findAll();
     }
 
-    public Optional<StockEntity> getStockById(Long id){
+    public Optional<Stock> getStockById(Long id){
         return stockRepository.findById(id);
     }
 
-    public StockEntity addStock(StockEntity stock)
+    public Stock addStock(Stock stock)
     {
         return stockRepository.save(stock);
     }
 
-    public StockEntity updateStock (Long id, StockEntity updatedStock)
+    public Stock updateStock (Long id, Stock updatedStock)
     {
-        StockEntity stock = stockRepository.findById(id)
+        Stock stock = stockRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Stock Id" + id + "non trovato"));
 
         stock.setBook(updatedStock.getBook());

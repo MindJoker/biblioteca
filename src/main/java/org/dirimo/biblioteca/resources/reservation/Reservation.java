@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dirimo.biblioteca.resources.book.BookEntity;
+import org.dirimo.biblioteca.resources.book.Book;
 import java.time.LocalDate;
 
 @Entity
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationEntity {
+public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class ReservationEntity {
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
-    private BookEntity book;
+    private Book book;
 
     //reservation - stock
 }

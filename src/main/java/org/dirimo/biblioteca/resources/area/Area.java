@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dirimo.biblioteca.resources.shelf.ShelfEntity;
+import org.dirimo.biblioteca.resources.shelf.Shelf;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AreaEntity {
+public class Area {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,6 @@ public class AreaEntity {
     private String description;
 
     @OneToMany(mappedBy = "area")
-    private List<ShelfEntity> shelves;
+    private List<Shelf> shelves;
 
 }

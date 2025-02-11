@@ -12,21 +12,21 @@ import java.util.Optional;
 public class AreaService {
     private final AreaRepository areaRepository;
 
-    public List<AreaEntity> getAllAreas()
+    public List<Area> getAllAreas()
     {
         return areaRepository.findAll();
     }
 
-    public Optional<AreaEntity> getAreaById(Long id){
+    public Optional<Area> getAreaById(Long id){
         return areaRepository.findById(id);
     }
 
-    public AreaEntity addArea(AreaEntity area){
+    public Area addArea(Area area){
         return areaRepository.save(area);
     }
 
-    public AreaEntity updateArea(Long id,AreaEntity updatedArea){
-        AreaEntity area = areaRepository.findById(id).orElseThrow(() -> new RuntimeException("Area con Id" + id + " non esiste"));
+    public Area updateArea(Long id, Area updatedArea){
+        Area area = areaRepository.findById(id).orElseThrow(() -> new RuntimeException("Area con Id" + id + " non esiste"));
         area.setName(updatedArea.getName());
         area.setDescription(updatedArea.getDescription());
         return areaRepository.save(area);

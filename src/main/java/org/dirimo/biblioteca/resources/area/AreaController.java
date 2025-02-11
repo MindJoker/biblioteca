@@ -15,12 +15,12 @@ public class AreaController {
     private final AreaService areaService;
 
     @GetMapping
-    public List<AreaEntity> getAllAreas() {
+    public List<Area> getAllAreas() {
         return areaService.getAllAreas();
     }
 
     @GetMapping("/{id}")
-    public AreaEntity getAreaById(@PathVariable Long id) {
+    public Area getAreaById(@PathVariable Long id) {
         return areaService
                 .getAreaById(id)
                 .orElseThrow(()
@@ -29,12 +29,12 @@ public class AreaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AreaEntity addArea(@RequestBody AreaEntity area) {
+    public Area addArea(@RequestBody Area area) {
         return areaService.addArea(area);
     }
 
     @PutMapping("/{id}")
-    public AreaEntity updateArea(@PathVariable Long id, @RequestBody AreaEntity area) {
+    public Area updateArea(@PathVariable Long id, @RequestBody Area area) {
         return areaService.updateArea(id, area);
     }
     @DeleteMapping("/{id}")

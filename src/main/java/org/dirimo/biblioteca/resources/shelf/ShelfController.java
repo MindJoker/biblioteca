@@ -17,23 +17,23 @@ public class ShelfController {
     private final ShelfService shelfService;
 
     @GetMapping
-    public List<ShelfEntity> getAllShelf() {
+    public List<Shelf> getAllShelf() {
         return shelfService.getAllShelf();
     }
 
     @GetMapping("/{id}")
-    public Optional<ShelfEntity> getShelfById(@PathVariable Long id) {
+    public Optional<Shelf> getShelfById(@PathVariable Long id) {
         return shelfService.getShelfById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ShelfEntity createShelf(@RequestBody ShelfEntity shelf) {
+    public Shelf createShelf(@RequestBody Shelf shelf) {
         return shelfService.addShelf(shelf);
     }
 
     @PutMapping("/{id}")
-    public ShelfEntity updateShelf(@PathVariable Long id, @RequestBody ShelfEntity shelf) {
+    public Shelf updateShelf(@PathVariable Long id, @RequestBody Shelf shelf) {
         return shelfService.updateShelf(id, shelf);
     }
 

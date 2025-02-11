@@ -17,23 +17,23 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping
-    public List<ReservationEntity> getAllReservations() {
+    public List<Reservation> getAllReservations() {
         return reservationService.getAllReservations();
     }
 
     @GetMapping("/{id}")
-    public Optional<ReservationEntity> getReservationById(@PathVariable Long id) {
+    public Optional<Reservation> getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationEntity createReservation(@RequestBody ReservationEntity reservation) {
+    public Reservation createReservation(@RequestBody Reservation reservation) {
         return reservationService.addReservation(reservation);
     }
 
     @PutMapping("/{id}")
-    public ReservationEntity updateReservation(@PathVariable Long id, @RequestBody ReservationEntity reservation) {
+    public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
         return reservationService.updateReservation(id, reservation);
     }
 

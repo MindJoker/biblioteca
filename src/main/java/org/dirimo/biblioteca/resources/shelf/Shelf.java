@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dirimo.biblioteca.resources.area.AreaEntity;
-import org.dirimo.biblioteca.resources.book.BookEntity;
+import org.dirimo.biblioteca.resources.area.Area;
+import org.dirimo.biblioteca.resources.book.Book;
 
 @Entity
 @Table(name = "shelf")
@@ -14,7 +14,7 @@ import org.dirimo.biblioteca.resources.book.BookEntity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShelfEntity {
+public class Shelf {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +25,9 @@ public class ShelfEntity {
 
     @ManyToOne
     @JoinColumn(name = "area_id")
-    private AreaEntity area;
+    private Area area;
 
     @OneToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
-    private BookEntity book;
+    private Book book;
 }

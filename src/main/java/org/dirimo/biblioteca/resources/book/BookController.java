@@ -15,19 +15,19 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public List<BookEntity> getAllBooks() {
+    public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public BookEntity getBookById(@PathVariable Long id) {
+    public Book getBookById(@PathVariable Long id) {
         return bookService.getBookById(id)
                 .orElseThrow(() -> new RuntimeException("Libro non trovato"));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookEntity addBook(@RequestBody BookEntity book) {
+    public Book addBook(@RequestBody Book book) {
         return bookService.addBook(book);
     }
 
@@ -41,7 +41,7 @@ public class BookController {
 //    }
 
     @PutMapping("/{id}")
-    public BookEntity updateBook(@PathVariable Long id, @RequestBody BookEntity book) {
+    public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
         return bookService.updateBook(id, book);
     }
 
