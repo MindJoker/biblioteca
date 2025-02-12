@@ -1,5 +1,6 @@
 package org.dirimo.biblioteca.resources.shelf;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dirimo.biblioteca.resources.area.Area;
 import org.dirimo.biblioteca.resources.book.Book;
+
+import java.util.List;
 
 @Entity
 @Table(name = "shelf")
@@ -27,7 +30,7 @@ public class Shelf {
     @JoinColumn(name = "area_id")
     private Area area;
 
-//    @OneToOne
-//    @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
-//    private Book book;
+    @OneToMany(mappedBy = "shelf")
+    @JsonIgnore
+    private List<Book> book;
 }

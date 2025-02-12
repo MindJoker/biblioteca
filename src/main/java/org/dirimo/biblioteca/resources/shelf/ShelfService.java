@@ -14,6 +14,9 @@ public class ShelfService {
     private final AreaRepository areaRepository;
 
     public List<Shelf> getAllShelf() {
+
+
+
         return shelfRepository.findAll();
     }
 
@@ -27,6 +30,8 @@ public class ShelfService {
         Area fullArea = areaRepository.findById(areaId).orElseThrow(
                 () -> new RuntimeException("Area Id "+ areaId +"not found")
         );
+
+
 
         shelf.setArea(fullArea);
 

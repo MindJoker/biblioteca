@@ -25,6 +25,11 @@ public class BookController {
                 .orElseThrow(() -> new RuntimeException("Libro non trovato"));
     }
 
+    @GetMapping("/shelf")
+    public List<Book> getBooksByShelfId(@RequestParam(required = true) Long shelfId) {
+        return bookService.getBooksByShelfId(shelfId);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Book addBook(@RequestBody Book book) {

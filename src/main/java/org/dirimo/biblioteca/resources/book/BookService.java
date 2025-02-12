@@ -1,6 +1,8 @@
 package org.dirimo.biblioteca.resources.book;
 
 import lombok.RequiredArgsConstructor;
+import org.dirimo.biblioteca.resources.shelf.Shelf;
+import org.dirimo.biblioteca.resources.shelf.ShelfRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +12,7 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final ShelfRepository shelfRepository;
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
@@ -20,52 +23,15 @@ public class BookService {
     }
 
     public Book addBook(Book book) {
+
+        Long shelfId = book.getShelf().getId();
+        Shelf fullShelf = shelfRepository.findById(shelfId)
+                .orElseThrow(() -> new RuntimeException("Shelf Id " + shelfId + " not found"));
+
+        book.setShelf(fullShelf);
+
         return bookRepository.save(book);
     }
-
-
-
-//    public BookEntity addBook(BookEntity book) {
-//        if (book.getStock() == null || book.getStock().getTotCopies() <= 0) {
-//            StockEntity stock = new StockEntity();
-//            stock.setTotCopies(1);
-//            stock.setAvCopies(1);
-//            stock.setBook(book);
-//            book.setStock(stock);
-//        }
-//        return bookRepository.save(book);
-//    }
-
-//    public BookDTO convertToDTO(BookEntity book) {
-//        StockDTO stockDTO = null;
-//        if(book.getStock() != null) {
-//            stockDTO = new StockDTO(
-//            book.getStock().getId(),
-//            book.getStock().getTotCopies(),
-//            book.getStock().getAvCopies()
-//            );
-//        }
-//
-//        return new BookDTO(
-//                book.getId(),
-//                book.getIsbn(),
-//                book.getTitle(),
-//                book.getAuthor(),
-//                book.getYear(),
-//                book.getGenre(),
-//                book.getPublisher(),
-//                book.getLanguage(),
-//                stockDTO
-//        );
-//    }
-//
-//    public List<BookDTO> getAllBooks() {
-//        return bookRepository.findAll()
-//                .stream()
-//                .map(this::convertToDTO)
-//                .toList();
-//    }
-
 
 
 
@@ -79,4 +45,10 @@ public class BookService {
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
+
+    public List<Book> getBooksByShelfId(Long shelfId) {
+
+        return bookRepository.findBooksByShelfId(shelfId);
+    }
+
 }

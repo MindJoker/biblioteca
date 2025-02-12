@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dirimo.biblioteca.resources.shelf.Shelf;
 import org.dirimo.biblioteca.resources.stock.Stock;
 import org.dirimo.biblioteca.resources.reservation.Reservation;
 
@@ -54,7 +55,7 @@ public class Book {
     @JsonIgnore
     private List <Reservation> reservation;
 
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "shelf_id")
+    private Shelf shelf;
 }
