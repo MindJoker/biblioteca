@@ -36,7 +36,7 @@ public class AreaController {
 
     // Create a area
     @PostMapping("/")
-    public Area createArea(@RequestBody Area area) {
+    public Area create(@RequestBody Area area) {
         return areaService.create(area);
     }
 

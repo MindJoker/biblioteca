@@ -43,7 +43,4 @@ public class Reservation {
     @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
     private Book book;
 
-    //reservation - stock
 }
-
-//classe embedded da vedere

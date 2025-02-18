@@ -32,19 +32,20 @@ public class ReservationService {
     }
 
     // Add a new reservation
-    public Reservation create(Reservation reservation) {
+    public Reservation open(Reservation reservation, LocalDate date) {
         // Updates stock
-        Long bookId = reservation.getBook().getId();
-        Optional<Stock> stockOptional = stockService.getByBookId(bookId);
+        Book book = reservation.getBook();
+        Optional<Stock> stockOptional = stockService.getByBook(book);
         Stock stock = stockOptional.orElseThrow(() ->
-                new RuntimeException("Libro con id: " + bookId + " non trovato.")
+                new RuntimeException("Libro con id: " + book.getId() + " non trovato.")
         );
 
         // Check copies availability
         if (stock.getAvailableCopies() <= 0) {
-            throw new RuntimeException("Non ci sono copie del libro " + bookId + " disponibili al momento.");
+            throw new RuntimeException("Non ci sono copie del libro " + book.getId() + " disponibili al momento.");
         } else {
             reservation.setStatus(ReservationStatus.ACTIVE);
+            reservation.setResStartDate(date);
             stock.handleQuantity(-1);
             return reservationRepository.save(reservation);
         }
