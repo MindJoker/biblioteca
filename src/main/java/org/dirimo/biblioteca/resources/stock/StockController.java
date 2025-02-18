@@ -1,49 +1,64 @@
 package org.dirimo.biblioteca.resources.stock;
 
-
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
+@Transactional
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stock")
+@RequestMapping("Stock")
 public class StockController {
 
     private final StockService stockService;
 
-    @GetMapping
-    public List<Stock> getAllStocks() {
-        return stockService.getAllStocks();
+    // Get all stocks
+    @GetMapping("/")
+    public List<Stock> getAll() {
+        return stockService.getAll();
     }
 
+    // Get stock by ID
     @GetMapping("/{id}")
-    public Optional<Stock> getStockById(@PathVariable Long id) {
-        return stockService.getStockById(id);
+    public Stock getById(@PathVariable Long id) {
+        return stockService.getById(id)
+                .orElseThrow(() -> new RuntimeException("Stock con id " + id + " non trovato."));
     }
 
-    @GetMapping("/book/{id}")
-    public Optional<Stock> getStockByBookId(@PathVariable Long id) {
-        return stockService.findByBookId(id);
+    // Get stock by bookID
+    @GetMapping("/book")
+    public Optional<Stock> getByBookId(@RequestParam Long bookId) {
+        return stockService.getByBookId(bookId);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Stock addStock(@RequestBody Stock stock) {
-        return stockService.addStock(stock);
+    // Create stock
+    @PostMapping("/")
+    public Stock create(@RequestBody Stock stock) {
+        return stockService.save(stock);
     }
 
+    // Update a stock
     @PutMapping("/{id}")
-    public Stock updateStock(@PathVariable Long id, @RequestBody Stock updatedStock) {
-        return stockService.updateStock(id, updatedStock);
+    public Stock update(@PathVariable Long id, @RequestBody Stock stock) {
+        return stockService.update(id, stock);
     }
 
+    // Delete a shelf
     @DeleteMapping("/{id}")
-    public void deleteStock(@PathVariable Long id) {
-        stockService.deleteStock(id);
+    public void delete(@PathVariable Long id) {
+        stockService.delete(id);
     }
 }

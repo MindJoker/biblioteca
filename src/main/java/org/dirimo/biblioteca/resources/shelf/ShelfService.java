@@ -1,8 +1,11 @@
 package org.dirimo.biblioteca.resources.shelf;
-import org.dirimo.biblioteca.resources.area.Area;
+
 import lombok.RequiredArgsConstructor;
+import org.dirimo.biblioteca.resources.area.Area;
 import org.dirimo.biblioteca.resources.area.AreaRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,38 +16,43 @@ public class ShelfService {
     private final ShelfRepository shelfRepository;
     private final AreaRepository areaRepository;
 
-    public List<Shelf> getAllShelf() {
+    @Value("${library.maxReservationPerUser}")
+    private int maxReservation;
 
-
-
+    // Get all shelves
+    public List<Shelf> getAll() {
         return shelfRepository.findAll();
     }
 
+    // Get a shelf by ID
     public Optional<Shelf> getShelfById(Long id) {
         return shelfRepository.findById(id);
     }
 
-    public Shelf addShelf(Shelf shelf) {
+    // Get shelves by area ID
+    public List<Shelf> getByAreaId(Long areaId) {
+        return shelfRepository.findByAreaId(areaId);
+    }
 
+    // Add a new shelf
+    public Shelf create(Shelf shelf) {
         Long areaId = shelf.getArea().getId();
-        Area fullArea = areaRepository.findById(areaId).orElseThrow(
-                () -> new RuntimeException("Area Id "+ areaId +"not found")
-        );
-
-
-
-        shelf.setArea(fullArea);
-
+        Area area = areaRepository.findById(areaId)
+                .orElseThrow(() -> new RuntimeException("Zona con id: " +areaId+ " non trovata."));
+        shelf.setArea(area);
         return shelfRepository.save(shelf);
     }
 
-    public Shelf updateShelf(Long id, Shelf shelf) {
-        shelfRepository.findById(id).orElseThrow(() -> new RuntimeException("Scaffale Id " + id + " non trovato"));
+    // Update a shelf
+    public Shelf update(Long id, Shelf shelf) {
+        shelfRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Scaffale con id: " + id + " non trovato."));
         shelf.setId(id);
         return shelfRepository.save(shelf);
     }
 
-    public void deleteShelf(Long id) {
+    // Delete a shelf by ID
+    public void delete(Long id) {
         shelfRepository.deleteById(id);
     }
 }

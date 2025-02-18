@@ -1,5 +1,6 @@
 package org.dirimo.biblioteca.resources.book;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -7,9 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
+@Transactional
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/books")
+@RequestMapping("Book")
 public class BookController {
 
     private final BookService bookService;
@@ -36,14 +38,6 @@ public class BookController {
         return bookService.addBook(book);
     }
 
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public BookService createBook(@RequestBody BookService book) {
-//        if (book.getStock() == null || book.getStock() <= 0) {
-//            book.setStock(1);  // Imposta almeno 1 se il valore è null o inferiore a 1
-//        }
-//        return bookRepository.save(book);
-//    }
 
     @PutMapping("/{id}")
     public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
