@@ -4,11 +4,10 @@ package org.dirimo.biblioteca.resources.reservation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dirimo.biblioteca.resources.reservation.close.CloseResAction;
+import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Transactional
@@ -19,7 +18,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping
+    @GetMapping("/")
     public List<Reservation> getAll() {
 
         return reservationService.getAll();
@@ -31,7 +30,7 @@ public class ReservationController {
                 .orElseThrow(() -> new RuntimeException("Prenotazione con Id " + id + " non trovata."));
     }
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public Reservation create(@RequestBody Reservation reservation) {
         return reservationService.create(reservation);
@@ -47,7 +46,7 @@ public class ReservationController {
     }
 
     @PostMapping("/close/{id}")
-    public Reservation close(@PathVariable Long id, @RequestBody CloseResAction action) {
+    public Reservation close(@PathVariable Long id, @RequestBody CloseReservationAction action) {
         return reservationService.close(id, action.getDate());
     }
 }

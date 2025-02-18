@@ -11,7 +11,7 @@ import org.dirimo.biblioteca.resources.reservation.reservEnum.ReservationStatus;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "reservation")
+@Table(name = "Reservations")
 @Getter
 @Setter
 @NoArgsConstructor

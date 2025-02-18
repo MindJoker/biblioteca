@@ -16,7 +16,7 @@ public class BookController {
 
     private final BookService bookService;
 
-    @GetMapping
+    @GetMapping("/")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
@@ -32,7 +32,7 @@ public class BookController {
         return bookService.getBooksByShelfId(shelfId);
     }
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public Book addBook(@RequestBody Book book) {
         return bookService.addBook(book);

@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "area")
+@Table(name = "Areas")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -14,7 +14,7 @@ import org.dirimo.biblioteca.resources.reservation.Reservation;
 import java.util.List;
 
 @Entity
-@Table(name = "book")
+@Table(name = "Books")
 @Getter
 @Setter
 @NoArgsConstructor

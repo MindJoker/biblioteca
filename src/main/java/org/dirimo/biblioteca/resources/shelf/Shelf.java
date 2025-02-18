@@ -12,7 +12,7 @@ import org.dirimo.biblioteca.resources.book.Book;
 import java.util.List;
 
 @Entity
-@Table(name = "shelf")
+@Table(name = "Shelfs")
 @Getter
 @Setter
 @NoArgsConstructor
