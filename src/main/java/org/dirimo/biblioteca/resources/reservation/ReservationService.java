@@ -40,7 +40,8 @@ public class ReservationService {
     public Reservation open(Reservation reservation) {
 
         Book book = bookRepository.findById(reservation.getBook().getId())
-                .orElseThrow(() -> new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
+                .orElseThrow(() ->
+                        new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
 
         Optional<Stock> stockOptional = stockService.getByBook(book);
         Stock stock = stockOptional.orElseThrow(() ->
@@ -135,7 +136,8 @@ public class ReservationService {
         String body = "<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>" +
                 "<p>Ciao <strong style='color: #007bff;'>" + reservation.getUsername() + "</strong>,</p>" +
                 "<p>✅ Hai riconsegnato il libro <strong style='color: #28a745;'>" + book.getTitle() + "</strong>.</p>" +
-                "<p>📅 La tua prenotazione è stata chiusa il <strong style='color: #dc3545;'>" + reservation.getResEndDate() + "</strong>.</p>" +
+                "<p>📅 La tua prenotazione è stata chiusa il <strong style='color: #dc3545;'>" +
+                reservation.getResEndDate() + "</strong>.</p>" +
                 "<br>" +
                 "<p>Grazie per aver utilizzato il nostro servizio!</p>" +
                 "<p><strong>La tua Biblioteca 📚</strong></p>" +
