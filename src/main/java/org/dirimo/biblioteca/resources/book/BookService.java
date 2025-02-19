@@ -24,11 +24,11 @@ public class BookService {
 
     public Book addBook(Book book) {
 
-        Long shelfId = book.getShelf().getId();
-        Shelf fullShelf = shelfRepository.findById(shelfId)
-                .orElseThrow(() -> new RuntimeException("Shelf Id " + shelfId + " not found"));
-
-        book.setShelf(fullShelf);
+//        Long shelfId = book.getShelf().getId();
+//        Shelf fullShelf = shelfRepository.findById(shelfId)
+//                .orElseThrow(() -> new RuntimeException("Shelf Id " + shelfId + " not found"));
+//
+//        book.setShelf(fullShelf);
 
         return bookRepository.save(book);
     }
@@ -38,11 +38,11 @@ public class BookService {
     public Book updateBook(Long id, Book book) {
         bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Libro con ID " + id + " non trovato"));
-        book.setId(id);
         return bookRepository.save(book);
     }
 
     public void deleteBook(Long id) {
+
         bookRepository.deleteById(id);
     }
 

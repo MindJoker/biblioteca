@@ -36,10 +36,10 @@ public class StockService {
 
     // Add a new stock
     public Stock create(Stock stock) {
-        Long bookId = stock.getBook().getId();
-        Book wholeBook = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Libro con Id " + bookId + " non trovato"));
-        stock.setBook(wholeBook);
+//        Long bookId = stock.getBook().getId();
+//        Book wholeBook = bookRepository.findById(bookId)
+//                .orElseThrow(() -> new RuntimeException("Libro con Id " + bookId + " non trovato"));
+//        stock.setBook(wholeBook);
         return stockRepository.save(stock);
     }
 

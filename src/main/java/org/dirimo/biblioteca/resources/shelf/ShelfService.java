@@ -36,10 +36,10 @@ public class ShelfService {
 
     // Add a new shelf
     public Shelf create(Shelf shelf) {
-        Long areaId = shelf.getArea().getId();
-        Area area = areaRepository.findById(areaId)
-                .orElseThrow(() -> new RuntimeException("Zona con id: " +areaId+ " non trovata."));
-        shelf.setArea(area);
+//        Long areaId = shelf.getArea().getId();
+//        Area area = areaRepository.findById(areaId)
+//                .orElseThrow(() -> new RuntimeException("Zona con id: " +areaId+ " non trovata."));
+//        shelf.setArea(area);
         return shelfRepository.save(shelf);
     }
 
@@ -47,7 +47,6 @@ public class ShelfService {
     public Shelf update(Long id, Shelf shelf) {
         shelfRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Scaffale con id: " + id + " non trovato."));
-        shelf.setId(id);
         return shelfRepository.save(shelf);
     }
 

@@ -27,7 +27,7 @@ public class Area {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = true, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @OneToMany(mappedBy = "area")

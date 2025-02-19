@@ -4,8 +4,7 @@ package org.dirimo.biblioteca.resources.reservation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dirimo.biblioteca.resources.reservation.action.HandleReservationAction;
-import org.dirimo.biblioteca.resources.reservation.request.OpenReservationRequest;
+import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -33,9 +32,14 @@ public class ReservationController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public Reservation create(@RequestBody OpenReservationRequest request) {
+    public Reservation create(@RequestBody Reservation reservation) {
+        return reservationService.create(reservation);
+    }
 
-        return reservationService.open(request.getReservation(), request.getAction().getDate());
+    @PostMapping("/open/")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Reservation open(@RequestBody Reservation reservation) {
+        return reservationService.open(reservation);
     }
 
     @PutMapping("/{id}")
@@ -45,11 +49,17 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
+
         reservationService.delete(id);
     }
 
+//    @PostMapping("/close/{id}")
+//    public Reservation close(@PathVariable Long id, @RequestBody CloseReservationAction action) {
+//        return reservationService.close(id, action.getDate());
+//    }
+
     @PostMapping("/close/{id}")
-    public Reservation close(@PathVariable Long id, @RequestBody HandleReservationAction action) {
-        return reservationService.close(id, action.getDate());
+    public Reservation close(@PathVariable Long id) {
+        return reservationService.close(id);
     }
 }

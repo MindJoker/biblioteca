@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dirimo.biblioteca.resources.book.Book;
-import org.dirimo.biblioteca.resources.reservation.reservEnum.ReservationStatus;
+import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 
 import java.time.LocalDate;
 
@@ -42,5 +42,13 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
     private Book book;
+
+    //@PreUpdate
+    @PrePersist
+    protected void onCreate() {
+        status = ReservationStatus.ACTIVE;
+        resStartDate = LocalDate.now();
+        resEndDate = resStartDate.plusDays(1); //14
+    }
 
 }
