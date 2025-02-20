@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dirimo.biblioteca.resources.book.Book;
+import org.dirimo.biblioteca.resources.common.BaseEntity;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 
 import java.time.LocalDate;
@@ -16,13 +17,10 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reservation {
+public class Reservation extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String username;
 
 

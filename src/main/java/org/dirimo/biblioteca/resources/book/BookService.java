@@ -12,7 +12,7 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final ShelfRepository shelfRepository;
+
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
@@ -23,13 +23,6 @@ public class BookService {
     }
 
     public Book addBook(Book book) {
-
-//        Long shelfId = book.getShelf().getId();
-//        Shelf fullShelf = shelfRepository.findById(shelfId)
-//                .orElseThrow(() -> new RuntimeException("Shelf Id " + shelfId + " not found"));
-//
-//        book.setShelf(fullShelf);
-
         return bookRepository.save(book);
     }
 

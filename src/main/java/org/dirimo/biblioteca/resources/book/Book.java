@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dirimo.biblioteca.resources.common.BaseEntity;
 import org.dirimo.biblioteca.resources.shelf.Shelf;
 import org.dirimo.biblioteca.resources.stock.Stock;
 import org.dirimo.biblioteca.resources.reservation.Reservation;
@@ -20,19 +21,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Book {
+public class Book extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
 
     @Column(nullable = false, unique = true, length = 13)
     private String isbn;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String author;
 
     @Column(nullable = false)
@@ -41,7 +40,7 @@ public class Book {
     @Column(nullable = false, length = 100)
     private String genre;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String publisher;
 
     @Column(nullable = false, length = 50)

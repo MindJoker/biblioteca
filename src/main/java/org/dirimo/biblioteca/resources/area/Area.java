@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dirimo.biblioteca.resources.common.BaseEntity;
 import org.dirimo.biblioteca.resources.shelf.Shelf;
 
 import java.util.List;
@@ -18,11 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Area {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Area extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String name;

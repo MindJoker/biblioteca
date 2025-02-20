@@ -33,7 +33,6 @@ public class AreaService {
     public Area update(Long id, Area area) {
         areaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Zona con id: " + id + " non trovata."));
-        area.setId(id);
         return areaRepository.save(area);
     }
 
