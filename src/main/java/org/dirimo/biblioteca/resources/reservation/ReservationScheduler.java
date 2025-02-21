@@ -15,15 +15,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
+@Async
 public class ReservationScheduler {
 
     private final MailService mailService;
     private final ReservationRepository reservationRepository;
     private final ReservationService reservationService;
 
-    @Async
-    @Scheduled(cron = "0 13 12 * * ?")
+    @Scheduled(cron = "0 0 8 * * ?")
     public void sendReminderEmails() {
         MailProperties mail = new MailProperties();
         LocalDate tomorrow = LocalDate.now().plusDays(1);
@@ -62,14 +61,14 @@ public class ReservationScheduler {
         }
     }
 
-    @Async
+
     @EventListener
     public void onOpenReservationEvent(OpenReservationEvent event) {
         MailProperties  mail = reservationService.buildOpenReservationMail(event.getReservation());
         mailService.sendEmail(mail);
     }
 
-    @Async
+
     @EventListener
     public void onCloseReservationEvent(ClosedReservationEvent event) {
         MailProperties  mail = reservationService.buildClosedReservationMail(event.getReservation());

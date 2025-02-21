@@ -6,7 +6,6 @@ import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
 import org.dirimo.biblioteca.resources.reservation.event.OpenReservationEvent;
 import org.dirimo.biblioteca.resources.reservation.mail.MailProperties;
-import org.dirimo.biblioteca.resources.reservation.mail.MailService;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 import org.dirimo.biblioteca.resources.reservation.event.ClosedReservationEvent;
 import org.dirimo.biblioteca.resources.stock.Stock;
@@ -27,7 +26,6 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final StockService stockService;
-    private final MailService mailService;
     private final BookRepository bookRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
