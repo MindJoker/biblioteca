@@ -23,6 +23,8 @@ public class Reservation extends BaseEntity {
     @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
+    private String email;
 
     @Column(name ="data_start", nullable = false)
     private LocalDate resStartDate;

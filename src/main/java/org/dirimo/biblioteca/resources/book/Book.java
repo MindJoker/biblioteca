@@ -23,8 +23,6 @@ import java.util.List;
 
 public class Book extends BaseEntity {
 
-
-
     @Column(nullable = false, unique = true, length = 13)
     private String isbn;
 

@@ -4,11 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
-import org.dirimo.biblioteca.resources.mail.MailService;
+import org.dirimo.biblioteca.resources.reservation.event.OpenReservationEvent;
+import org.dirimo.biblioteca.resources.reservation.mail.MailProperties;
+import org.dirimo.biblioteca.resources.reservation.mail.MailService;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
+import org.dirimo.biblioteca.resources.reservation.event.ClosedReservationEvent;
 import org.dirimo.biblioteca.resources.stock.Stock;
 import org.dirimo.biblioteca.resources.stock.StockService;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +29,7 @@ public class ReservationService {
     private final StockService stockService;
     private final MailService mailService;
     private final BookRepository bookRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     // Get all reservations
     public List<Reservation> getAll() {
@@ -35,6 +40,26 @@ public class ReservationService {
     public Optional<Reservation> getById(Long id) {
         return reservationRepository.findById(id);
     }
+
+
+
+    // Add a new reservation
+    public Reservation create(Reservation reservation) {
+        return reservationRepository.save(reservation);
+    }
+
+    // Update a reservation
+    public Reservation update(Long id, Reservation reservation) {
+        reservationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prenotazione con id: " + id + " non trovata"));
+        return reservationRepository.save(reservation);
+    }
+
+    // Delete a reservation by ID
+    public void delete(Long id) {
+        reservationRepository.deleteById(id);
+    }
+
 
     // Open a new reservation (fill in attributes)
     public Reservation open(Reservation reservation) {
@@ -56,26 +81,9 @@ public class ReservationService {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        sendOpenReservationEmail(reservation);
+        applicationEventPublisher.publishEvent(new OpenReservationEvent(this, savedReservation));
 
         return savedReservation;
-    }
-
-    // Add a new reservation
-    public Reservation create(Reservation reservation) {
-        return reservationRepository.save(reservation);
-    }
-
-    // Update a reservation
-    public Reservation update(Long id, Reservation reservation) {
-        reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prenotazione con id: " + id + " non trovata"));
-        return reservationRepository.save(reservation);
-    }
-
-    // Delete a reservation by ID
-    public void delete(Long id) {
-        reservationRepository.deleteById(id);
     }
 
     // Close a reservation
@@ -98,15 +106,19 @@ public class ReservationService {
         log.info("Hai riportato indietro il libro in " + diff + " giorni.");
 
 
-        sendCloseReservationEmail(reservation);
+        applicationEventPublisher.publishEvent(new ClosedReservationEvent(this, reservation));
+
 
         return reservation;
     }
 
 
-    private void sendOpenReservationEmail(Reservation reservation) {
+    public MailProperties buildOpenReservationMail(Reservation reservation) {
+        MailProperties mail = new MailProperties();
 
-        Book book = reservation.getBook();
+        Book book = bookRepository.findById(reservation.getBook().getId())
+                .orElseThrow(() ->
+                        new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
 
         String subject = "Conferma prenotazione del libro " + book.getTitle();
         String body = "<div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; " +
@@ -125,11 +137,17 @@ public class ReservationService {
                 "<p style='color: #555;'>Grazie, <br>La tua Biblioteca 📚</p>" +
                 "</div>";
 
-        mailService.sendEmail("8b9b893d0f4a3e@sandbox.smtp.mailtrap.io", subject, body);
+        mail.setTo(reservation.getEmail());
+        mail.setSubject(subject);
+        mail.setBody(body);
+
+        return mail;
     }
 
 
-    private void sendCloseReservationEmail(Reservation reservation) {
+    public MailProperties buildClosedReservationMail(Reservation reservation) {
+        MailProperties mail = new MailProperties();
+
         Book book = reservation.getBook();
 
         String subject = "Conferma chiusura prenotazione del libro " + book.getTitle();
@@ -143,8 +161,11 @@ public class ReservationService {
                 "<p><strong>La tua Biblioteca 📚</strong></p>" +
                 "</div>";
 
-        mailService.sendEmail("8b9b893d0f4a3e@sandbox.smtp.mailtrap.io", subject, body);
+        mail.setTo(reservation.getEmail());
+        mail.setSubject(subject);
+        mail.setBody(body);
 
+        return mail;
     }
 
 }

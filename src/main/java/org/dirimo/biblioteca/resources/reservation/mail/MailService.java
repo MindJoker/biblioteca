@@ -1,4 +1,4 @@
-package org.dirimo.biblioteca.resources.mail;
+package org.dirimo.biblioteca.resources.reservation.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -13,18 +13,18 @@ public class MailService {
 
     private final JavaMailSender mailSender;
 
-    public void sendEmail(String to, String subject, String body) {
+    public void sendEmail(MailProperties mail) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(body, true); // true = abilita HTML
+            helper.setTo(mail.getTo());
+            helper.setSubject(mail.getSubject());
+            helper.setText(mail.getBody(), true); // true = abilita HTML
             helper.setFrom("8b9b893d0f4a3e@sandbox.smtp.mailtrap.io");
 
             mailSender.send(message);
-            System.out.println("Email inviata a " + to);
+            System.out.println("Email inviata a " + mail.getTo());
         } catch (MessagingException e) {
             System.err.println("Errore nell'invio dell'email: " + e.getMessage());
             throw new RuntimeException("Errore durante l'invio dell'email", e);

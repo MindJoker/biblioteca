@@ -25,10 +25,10 @@ public abstract class BaseEntity {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(nullable = false, updatable = false)
-    private String createdBy;
+    private String createdBy = "user";
 
     @Column(nullable = false)
-    private String updatedBy;
+    private String updatedBy = "user";
 
     @PreUpdate
     protected void onUpdate(){
