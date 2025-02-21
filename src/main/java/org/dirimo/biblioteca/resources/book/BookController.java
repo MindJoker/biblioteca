@@ -17,36 +17,36 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/")
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public List<Book> getAll() {
+        return bookService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
-        return bookService.getBookById(id)
+    public Book getById(@PathVariable Long id) {
+        return bookService.getById(id)
                 .orElseThrow(() -> new RuntimeException("Libro non trovato"));
     }
 
     @GetMapping("/shelf")
-    public List<Book> getBooksByShelfId(@RequestParam(required = true) Long shelfId) {
-        return bookService.getBooksByShelfId(shelfId);
+    public List<Book> getByShelfId(@RequestParam(required = true) Long shelfId) {
+        return bookService.getByShelfId(shelfId);
     }
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public Book addBook(@RequestBody Book book) {
-        return bookService.addBook(book);
+    public Book create(@RequestBody Book book) {
+        return bookService.create(book);
     }
 
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
-        return bookService.updateBook(id, book);
+    public Book update(@PathVariable Long id, @RequestBody Book book) {
+        return bookService.update(id, book);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+    public void delete(@PathVariable Long id) {
+        bookService.delete(id);
     }
 }
 

@@ -1,11 +1,9 @@
 package org.dirimo.biblioteca.resources.reservation;
 
 import lombok.RequiredArgsConstructor;
-import org.dirimo.biblioteca.resources.reservation.event.ClosedReservationEvent;
-import org.dirimo.biblioteca.resources.reservation.event.OpenReservationEvent;
-import org.dirimo.biblioteca.resources.reservation.mail.MailProperties;
-import org.dirimo.biblioteca.resources.reservation.mail.MailService;
-import org.springframework.context.event.EventListener;
+import org.dirimo.biblioteca.mail.MailProperties;
+import org.dirimo.biblioteca.mail.MailService;
+import org.dirimo.biblioteca.resources.customer.CustomerRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,10 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Async
 public class ReservationScheduler {
-
+//solo job
     private final MailService mailService;
     private final ReservationRepository reservationRepository;
-    private final ReservationService reservationService;
+    private final CustomerRepository customerRepository;
+
 
     @Scheduled(cron = "0 0 8 * * ?")
     public void sendReminderEmails() {
@@ -34,11 +33,11 @@ public class ReservationScheduler {
             try {
                 //String userEmail = "8b9b893d0f4a3e@sandbox.smtp.mailtrap.io";
 
-                String userEmail = reservation.getEmail();
+                String userEmail = reservation.getCustomer().getEmail();
 
                 String subject = "Promemoria Prenotazione - Biblioteca";
                 String body = "<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>" +
-                        "<p>Ciao <strong style='color: #007bff;'>" + reservation.getUsername() + "</strong>,</p>" +
+                        "<p>Ciao <strong style='color: #007bff;'>" + reservation.getCustomer().getFirstName()+ "</strong>,</p>" +
                         "<p>📚 La tua prenotazione per il libro <strong style='color: #28a745;'>"
                         + reservation.getBook().getTitle() + "</strong> " +
                         "scadrà domani (<strong style='color: #dc3545;'>" + reservation.getResEndDate() + "</strong>).</p>" +
@@ -62,16 +61,7 @@ public class ReservationScheduler {
     }
 
 
-    @EventListener
-    public void onOpenReservationEvent(OpenReservationEvent event) {
-        MailProperties  mail = reservationService.buildOpenReservationMail(event.getReservation());
-        mailService.sendEmail(mail);
-    }
 
-
-    @EventListener
-    public void onCloseReservationEvent(ClosedReservationEvent event) {
-        MailProperties  mail = reservationService.buildClosedReservationMail(event.getReservation());
-        mailService.sendEmail(mail);
-    }
 }
+// entita customer da aggiungere  nome cognome email
+// velocity(?)

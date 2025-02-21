@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dirimo.biblioteca.resources.reservation.Reservation;
 
 import java.time.LocalDate;
 
@@ -13,4 +14,5 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class OpenReservationAction {
     private LocalDate date;
+    private Reservation reservation;
 }

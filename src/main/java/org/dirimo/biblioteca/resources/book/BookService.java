@@ -1,8 +1,6 @@
 package org.dirimo.biblioteca.resources.book;
 
 import lombok.RequiredArgsConstructor;
-import org.dirimo.biblioteca.resources.shelf.Shelf;
-import org.dirimo.biblioteca.resources.shelf.ShelfRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -14,34 +12,34 @@ public class BookService {
     private final BookRepository bookRepository;
 
 
-    public List<Book> getAllBooks() {
+    public List<Book> getAll() {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> getBookById(Long id) {
+    public Optional<Book> getById(Long id) {
         return bookRepository.findById(id);
     }
 
-    public Book addBook(Book book) {
+    public Book create(Book book) {
         return bookRepository.save(book);
     }
 
 
 
-    public Book updateBook(Long id, Book book) {
+    public Book update(Long id, Book book) {
         bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Libro con ID " + id + " non trovato"));
         return bookRepository.save(book);
     }
 
-    public void deleteBook(Long id) {
+    public void delete(Long id) {
 
         bookRepository.deleteById(id);
     }
 
-    public List<Book> getBooksByShelfId(Long shelfId) {
+    public List<Book> getByShelfId(Long shelfId) {
 
-        return bookRepository.findBooksByShelfId(shelfId);
+        return bookRepository.findByShelfId(shelfId);
     }
 
 }

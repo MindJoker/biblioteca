@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
+import org.dirimo.biblioteca.resources.customer.Customer;
+import org.dirimo.biblioteca.resources.customer.CustomerRepository;
+import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction;
+import org.dirimo.biblioteca.resources.reservation.action.OpenReservationAction;
 import org.dirimo.biblioteca.resources.reservation.event.OpenReservationEvent;
-import org.dirimo.biblioteca.resources.reservation.mail.MailProperties;
+import org.dirimo.biblioteca.mail.MailProperties;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 import org.dirimo.biblioteca.resources.reservation.event.ClosedReservationEvent;
 import org.dirimo.biblioteca.resources.stock.Stock;
@@ -27,6 +31,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final StockService stockService;
     private final BookRepository bookRepository;
+    private final CustomerRepository customerRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     // Get all reservations
@@ -38,8 +43,6 @@ public class ReservationService {
     public Optional<Reservation> getById(Long id) {
         return reservationRepository.findById(id);
     }
-
-
 
     // Add a new reservation
     public Reservation create(Reservation reservation) {
@@ -60,7 +63,10 @@ public class ReservationService {
 
 
     // Open a new reservation (fill in attributes)
-    public Reservation open(Reservation reservation) {
+    public Reservation open(OpenReservationAction action) {
+
+        Reservation reservation = action.getReservation();
+        LocalDate date = action.getDate();
 
         Book book = bookRepository.findById(reservation.getBook().getId())
                 .orElseThrow(() ->
@@ -75,6 +81,8 @@ public class ReservationService {
             throw new RuntimeException("Non ci sono copie disponibili per il libro con id: " + book.getId());
         }
 
+
+        reservation.setResStartDate(date);
         stock.handleQuantity(-1);
 
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -85,12 +93,14 @@ public class ReservationService {
     }
 
     // Close a reservation
-    public Reservation close(Long id) {
-        // Updates reservation
+    public Reservation close(Long id, CloseReservationAction closeReservationAction) {
+
+        LocalDate date = closeReservationAction.getDate();
+
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prenotazione con id: " + id + " non trovata"));
         reservation.setStatus(ReservationStatus.CLOSED);
-        reservation.setResEndDate(LocalDate.now());
+        reservation.setResEndDate(date);
 
         // Updates stock
         Book book = reservation.getBook();
@@ -114,15 +124,20 @@ public class ReservationService {
     public MailProperties buildOpenReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
 
+
         Book book = bookRepository.findById(reservation.getBook().getId())
                 .orElseThrow(() ->
                         new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
+
+        Customer customer = customerRepository.findById(reservation.getCustomer().getId())
+                .orElseThrow(() ->
+                        new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
 
         String subject = "Conferma prenotazione del libro " + book.getTitle();
         String body = "<div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; " +
                 "border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;'>" +
                 "<h2 style='color: #007bff;'>📚 Promemoria Prenotazione - Biblioteca</h2>" +
-                "<p>Ciao <strong>" + reservation.getUsername() + "</strong>,</p>" +
+                "<p>Ciao <strong>" + customer.getFirstName() + "</strong>,</p>" +
                 "<p>La tua prenotazione per il libro <strong style='color: #28a745;'>"
                 + book.getTitle() + "</strong> " +
                 "scadrà domani (<strong>" + reservation.getResEndDate() + "</strong>).</p>" +
@@ -135,9 +150,11 @@ public class ReservationService {
                 "<p style='color: #555;'>Grazie, <br>La tua Biblioteca 📚</p>" +
                 "</div>";
 
-        mail.setTo(reservation.getEmail());
+        mail.setTo(customer.getEmail());
         mail.setSubject(subject);
         mail.setBody(body);
+
+        log.info("Reservation service email = " + mail.getTo());
 
         return mail;
     }
@@ -150,7 +167,7 @@ public class ReservationService {
 
         String subject = "Conferma chiusura prenotazione del libro " + book.getTitle();
         String body = "<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>" +
-                "<p>Ciao <strong style='color: #007bff;'>" + reservation.getUsername() + "</strong>,</p>" +
+                "<p>Ciao <strong style='color: #007bff;'>" + reservation.getCustomer().getFirstName() + "</strong>,</p>" +
                 "<p>✅ Hai riconsegnato il libro <strong style='color: #28a745;'>" + book.getTitle() + "</strong>.</p>" +
                 "<p>📅 La tua prenotazione è stata chiusa il <strong style='color: #dc3545;'>" +
                 reservation.getResEndDate() + "</strong>.</p>" +
@@ -159,7 +176,7 @@ public class ReservationService {
                 "<p><strong>La tua Biblioteca 📚</strong></p>" +
                 "</div>";
 
-        mail.setTo(reservation.getEmail());
+        mail.setTo(reservation.getCustomer().getEmail());
         mail.setSubject(subject);
         mail.setBody(body);
 

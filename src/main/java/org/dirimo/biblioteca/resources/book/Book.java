@@ -1,13 +1,12 @@
 package org.dirimo.biblioteca.resources.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dirimo.biblioteca.resources.common.BaseEntity;
+import org.dirimo.biblioteca.common.BaseEntity;
 import org.dirimo.biblioteca.resources.shelf.Shelf;
 import org.dirimo.biblioteca.resources.stock.Stock;
 import org.dirimo.biblioteca.resources.reservation.Reservation;
@@ -22,6 +21,10 @@ import java.util.List;
 @AllArgsConstructor
 
 public class Book extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, unique = true, length = 13)
     private String isbn;
@@ -50,9 +53,11 @@ public class Book extends BaseEntity {
 
     @OneToMany(mappedBy = "book")
     @JsonIgnore
-    private List <Reservation> reservation;
+    private List<Reservation> reservation;
 
     @ManyToOne
     @JoinColumn(name = "shelf_id")
     private Shelf shelf;
+
+
 }

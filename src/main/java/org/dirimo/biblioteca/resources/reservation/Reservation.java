@@ -1,15 +1,18 @@
 package org.dirimo.biblioteca.resources.reservation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dirimo.biblioteca.resources.book.Book;
-import org.dirimo.biblioteca.resources.common.BaseEntity;
+import org.dirimo.biblioteca.common.BaseEntity;
+import org.dirimo.biblioteca.resources.customer.Customer;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "Reservations")
@@ -20,16 +23,20 @@ import java.time.LocalDate;
 public class Reservation extends BaseEntity {
 
 
-    @Column(nullable = false)
-    private String username;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false)
-    private String email;
+//    @Column(nullable = false)
+//    private String username;
+//
+//    @Column(nullable = false)
+//    private String email;
 
-    @Column(name ="data_start", nullable = false)
+    @Column(name = "data_start", nullable = false)
     private LocalDate resStartDate;
 
-    @Column(name="data_end")
+    @Column(name = "data_end")
     private LocalDate resEndDate;
 
     @Column(name = "status")
@@ -43,11 +50,14 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
     private Book book;
 
-    //@PreUpdate
-    @PrePersist
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id", unique = true)
+    private Customer customer;
+
+    @Override
     protected void onCreate() {
+        super.onCreate();
         status = ReservationStatus.ACTIVE;
-        resStartDate = LocalDate.now();
         resEndDate = resStartDate.plusDays(1); //14
     }
 

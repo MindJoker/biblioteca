@@ -1,4 +1,4 @@
-package org.dirimo.biblioteca.resources.reservation.mail;
+package org.dirimo.biblioteca.mail;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

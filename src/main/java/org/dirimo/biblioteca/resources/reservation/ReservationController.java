@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction;
+import org.dirimo.biblioteca.resources.reservation.action.OpenReservationAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -36,11 +37,6 @@ public class ReservationController {
         return reservationService.create(reservation);
     }
 
-    @PostMapping("/open/")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Reservation open(@RequestBody Reservation reservation) {
-        return reservationService.open(reservation);
-    }
 
     @PutMapping("/{id}")
     public Reservation update(@PathVariable Long id, @RequestBody Reservation reservation) {
@@ -53,13 +49,16 @@ public class ReservationController {
         reservationService.delete(id);
     }
 
-//    @PostMapping("/close/{id}")
-//    public Reservation close(@PathVariable Long id, @RequestBody CloseReservationAction action) {
-//        return reservationService.close(id, action.getDate());
-//    }
+
+    @PostMapping("/open/")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Reservation open(@RequestBody OpenReservationAction openReservationAction) {
+        return reservationService.open(openReservationAction);
+    }
+
 
     @PostMapping("/close/{id}")
-    public Reservation close(@PathVariable Long id) {
-        return reservationService.close(id);
+    public Reservation close(@PathVariable Long id, @RequestBody CloseReservationAction closeReservationAction) {
+        return reservationService.close(id, closeReservationAction);
     }
 }
