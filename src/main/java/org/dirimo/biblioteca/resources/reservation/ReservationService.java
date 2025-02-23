@@ -85,7 +85,6 @@ public class ReservationService {
             throw new RuntimeException("Non ci sono copie disponibili per il libro con id: " + book.getId());
         }
 
-
         reservation.setResStartDate(date);
         stock.handleQuantity(-1);
 
@@ -125,61 +124,23 @@ public class ReservationService {
     }
 
 
-//    public MailProperties buildOpenReservationMail(Reservation reservation) {
-//        MailProperties mail = new MailProperties();
-//
-//
-//        Book book = bookRepository.findById(reservation.getBook().getId())
-//                .orElseThrow(() ->
-//                        new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
-//
-//        Customer customer = customerRepository.findById(reservation.getCustomer().getId())
-//                .orElseThrow(() ->
-//                        new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
-//
-//        String subject = "Conferma prenotazione del libro " + book.getTitle();
-//        String body = "<div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; " +
-//                "border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;'>" +
-//                "<h2 style='color: #007bff;'>📚 Promemoria Prenotazione - Biblioteca</h2>" +
-//                "<p>Ciao <strong>" + customer.getFirstName() + "</strong>,</p>" +
-//                "<p>La tua prenotazione per il libro <strong style='color: #28a745;'>"
-//                + book.getTitle() + "</strong> " +
-//                "scadrà domani (<strong>" + reservation.getResEndDate() + "</strong>).</p>" +
-//                "<p>Ti ricordiamo di restituire il libro in tempo per evitare penalità.</p>" +
-//                "<div style='text-align: center; margin: 20px 0;'>" +
-//                "<a href='https://biblioteca.example.com/reservations' " +
-//                "style='background-color: #007bff; color: #ffffff; padding: 10px 20px; " +
-//                "text-decoration: none; border-radius: 5px; font-size: 16px;'>📖 Visualizza Prenotazione</a>" +
-//                "</div>" +
-//                "<p style='color: #555;'>Grazie, <br>La tua Biblioteca 📚</p>" +
-//                "</div>";
-//
-//        mail.setTo(customer.getEmail());
-//        mail.setSubject(subject);
-//        mail.setBody(body);
-//
-//        log.info("Reservation service email = " + mail.getTo());
-//
-//        return mail;
-//    }
-
     public MailProperties buildOpenReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
 
-        // Recupera il libro e il cliente
+
         Book book = bookRepository.findById(reservation.getBook().getId())
                 .orElseThrow(() -> new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
 
         Customer customer = customerRepository.findById(reservation.getCustomer().getId())
                 .orElseThrow(() -> new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
 
-        // Creazione della mappa con i dati dinamici
+
         Map<String, Object> model = new HashMap<>();
         model.put("customerName", customer.getFirstName());
         model.put("bookTitle", book.getTitle());
         model.put("resEndDate", reservation.getResEndDate());
 
-        // Generazione dell'email dal template di conferma prenotazione
+
         String body = emailTemplateService.generateEmail("OpenReservationMailTemplate", model);
 
         mail.setTo(customer.getEmail());
@@ -191,27 +152,24 @@ public class ReservationService {
         return mail;
     }
 
-
-
     public MailProperties buildClosedReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
 
         Book book = reservation.getBook();
 
-        String subject = "Conferma chiusura prenotazione del libro " + book.getTitle();
-        String body = "<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>" +
-                "<p>Ciao <strong style='color: #007bff;'>" + reservation.getCustomer().getFirstName() + "</strong>,</p>" +
-                "<p>✅ Hai riconsegnato il libro <strong style='color: #28a745;'>" + book.getTitle() + "</strong>.</p>" +
-                "<p>📅 La tua prenotazione è stata chiusa il <strong style='color: #dc3545;'>" +
-                reservation.getResEndDate() + "</strong>.</p>" +
-                "<br>" +
-                "<p>Grazie per aver utilizzato il nostro servizio!</p>" +
-                "<p><strong>La tua Biblioteca 📚</strong></p>" +
-                "</div>";
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("customerName", reservation.getCustomer().getFirstName());
+        model.put("bookTitle", book.getTitle());
+        model.put("resEndDate", reservation.getResEndDate());
+
+        String body = emailTemplateService.generateEmail("CloseReservationMailTemplate", model);
 
         mail.setTo(reservation.getCustomer().getEmail());
-        mail.setSubject(subject);
         mail.setBody(body);
+        mail.setSubject("Conferma chiusura prenotazione del libro " + book.getTitle());
+
+        log.info("Email di chiusura prenotazione inviata a: " + mail.getTo());
 
         return mail;
     }

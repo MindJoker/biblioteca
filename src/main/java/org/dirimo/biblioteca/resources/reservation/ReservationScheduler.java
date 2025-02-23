@@ -1,28 +1,28 @@
 package org.dirimo.biblioteca.resources.reservation;
 
 import lombok.RequiredArgsConstructor;
+import org.dirimo.biblioteca.mail.EmailTemplateService;
 import org.dirimo.biblioteca.mail.MailProperties;
 import org.dirimo.biblioteca.mail.MailService;
-import org.dirimo.biblioteca.resources.customer.CustomerRepository;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Async
 public class ReservationScheduler {
 //solo job
     private final MailService mailService;
     private final ReservationRepository reservationRepository;
-    private final CustomerRepository customerRepository;
+    private final EmailTemplateService emailTemplateService;
 
-
-    @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 41 22 * * ?")
     public void sendReminderEmails() {
+        System.out.println("Esecuzione del metodo sendReminderEmails() - " + LocalDate.now());
         MailProperties mail = new MailProperties();
         LocalDate tomorrow = LocalDate.now().plusDays(1);
 
@@ -31,21 +31,18 @@ public class ReservationScheduler {
 
         for (Reservation reservation : expiringReservations) {
             try {
-                //String userEmail = "8b9b893d0f4a3e@sandbox.smtp.mailtrap.io";
 
                 String userEmail = reservation.getCustomer().getEmail();
 
-                String subject = "Promemoria Prenotazione - Biblioteca";
-                String body = "<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>" +
-                        "<p>Ciao <strong style='color: #007bff;'>" + reservation.getCustomer().getFirstName()+ "</strong>,</p>" +
-                        "<p>📚 La tua prenotazione per il libro <strong style='color: #28a745;'>"
-                        + reservation.getBook().getTitle() + "</strong> " +
-                        "scadrà domani (<strong style='color: #dc3545;'>" + reservation.getResEndDate() + "</strong>).</p>" +
-                        "<p style='font-size: 14px; color: #666;'>Ti ricordiamo di restituire il libro in tempo per evitare penalità.</p>" +
-                        "<br>" +
-                        "<p>Grazie,</p>" +
-                        "<p><strong>La tua Biblioteca 📚</strong></p>" +
-                        "</div>";
+                String subject = "Promemoria Prenotazione libro" + reservation.getBook().getTitle() + "- Biblioteca";
+
+                Map<String, Object> model = new HashMap<>();
+
+                model.put("customerName", reservation.getCustomer().getFirstName());
+                model.put("bookTitle", reservation.getBook().getTitle());
+                model.put("resEndDate", reservation.getResEndDate());
+
+                String body = emailTemplateService.generateEmail("ReminderReservationMailTemplate", model);
 
                 mail.setTo(userEmail);
                 mail.setSubject(subject);
@@ -59,9 +56,4 @@ public class ReservationScheduler {
             }
         }
     }
-
-
-
 }
-// entita customer da aggiungere  nome cognome email
-// velocity(?)
