@@ -47,7 +47,7 @@ public class Reservation extends BaseEntity {
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "book_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
     @ManyToOne

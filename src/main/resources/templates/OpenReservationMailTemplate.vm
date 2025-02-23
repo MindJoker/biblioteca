@@ -1,0 +1,14 @@
+<div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; 
+            border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;'>
+    <h2 style='color: #007bff;'>📚 Conferma Prenotazione - Biblioteca</h2>
+    <p>Ciao <strong>$customerName</strong>,</p>
+    <p>Hai appena prenotato il libro <strong style='color: #28a745;'>$bookTitle</strong>.</p>
+    <p>La tua prenotazione è valida fino al <strong>$resEndDate</strong>.</p>
+    <p>Puoi ritirarlo presso la biblioteca entro la data di scadenza.</p>
+    <div style='text-align: center; margin: 20px 0;'>
+        <a href="https://biblioteca.example.com/reservations"
+           style='background-color: #007bff; color: #ffffff; padding: 10px 20px; 
+           text-decoration: none; border-radius: 5px; font-size: 16px;'>📖 Visualizza Prenotazione</a>
+    </div>
+    <p style='color: #555;'>Grazie per aver usato il nostro servizio, <br>La tua Biblioteca 📚</p>
+</div>

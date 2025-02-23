@@ -2,6 +2,7 @@ package org.dirimo.biblioteca.resources.reservation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dirimo.biblioteca.mail.EmailTemplateService;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
 import org.dirimo.biblioteca.resources.customer.Customer;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -33,6 +36,7 @@ public class ReservationService {
     private final BookRepository bookRepository;
     private final CustomerRepository customerRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final EmailTemplateService emailTemplateService;
 
     // Get all reservations
     public List<Reservation> getAll() {
@@ -121,43 +125,72 @@ public class ReservationService {
     }
 
 
+//    public MailProperties buildOpenReservationMail(Reservation reservation) {
+//        MailProperties mail = new MailProperties();
+//
+//
+//        Book book = bookRepository.findById(reservation.getBook().getId())
+//                .orElseThrow(() ->
+//                        new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
+//
+//        Customer customer = customerRepository.findById(reservation.getCustomer().getId())
+//                .orElseThrow(() ->
+//                        new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
+//
+//        String subject = "Conferma prenotazione del libro " + book.getTitle();
+//        String body = "<div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; " +
+//                "border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;'>" +
+//                "<h2 style='color: #007bff;'>📚 Promemoria Prenotazione - Biblioteca</h2>" +
+//                "<p>Ciao <strong>" + customer.getFirstName() + "</strong>,</p>" +
+//                "<p>La tua prenotazione per il libro <strong style='color: #28a745;'>"
+//                + book.getTitle() + "</strong> " +
+//                "scadrà domani (<strong>" + reservation.getResEndDate() + "</strong>).</p>" +
+//                "<p>Ti ricordiamo di restituire il libro in tempo per evitare penalità.</p>" +
+//                "<div style='text-align: center; margin: 20px 0;'>" +
+//                "<a href='https://biblioteca.example.com/reservations' " +
+//                "style='background-color: #007bff; color: #ffffff; padding: 10px 20px; " +
+//                "text-decoration: none; border-radius: 5px; font-size: 16px;'>📖 Visualizza Prenotazione</a>" +
+//                "</div>" +
+//                "<p style='color: #555;'>Grazie, <br>La tua Biblioteca 📚</p>" +
+//                "</div>";
+//
+//        mail.setTo(customer.getEmail());
+//        mail.setSubject(subject);
+//        mail.setBody(body);
+//
+//        log.info("Reservation service email = " + mail.getTo());
+//
+//        return mail;
+//    }
+
     public MailProperties buildOpenReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
 
-
+        // Recupera il libro e il cliente
         Book book = bookRepository.findById(reservation.getBook().getId())
-                .orElseThrow(() ->
-                        new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
+                .orElseThrow(() -> new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
 
         Customer customer = customerRepository.findById(reservation.getCustomer().getId())
-                .orElseThrow(() ->
-                        new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
+                .orElseThrow(() -> new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
 
-        String subject = "Conferma prenotazione del libro " + book.getTitle();
-        String body = "<div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; " +
-                "border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;'>" +
-                "<h2 style='color: #007bff;'>📚 Promemoria Prenotazione - Biblioteca</h2>" +
-                "<p>Ciao <strong>" + customer.getFirstName() + "</strong>,</p>" +
-                "<p>La tua prenotazione per il libro <strong style='color: #28a745;'>"
-                + book.getTitle() + "</strong> " +
-                "scadrà domani (<strong>" + reservation.getResEndDate() + "</strong>).</p>" +
-                "<p>Ti ricordiamo di restituire il libro in tempo per evitare penalità.</p>" +
-                "<div style='text-align: center; margin: 20px 0;'>" +
-                "<a href='https://biblioteca.example.com/reservations' " +
-                "style='background-color: #007bff; color: #ffffff; padding: 10px 20px; " +
-                "text-decoration: none; border-radius: 5px; font-size: 16px;'>📖 Visualizza Prenotazione</a>" +
-                "</div>" +
-                "<p style='color: #555;'>Grazie, <br>La tua Biblioteca 📚</p>" +
-                "</div>";
+        // Creazione della mappa con i dati dinamici
+        Map<String, Object> model = new HashMap<>();
+        model.put("customerName", customer.getFirstName());
+        model.put("bookTitle", book.getTitle());
+        model.put("resEndDate", reservation.getResEndDate());
+
+        // Generazione dell'email dal template di conferma prenotazione
+        String body = emailTemplateService.generateEmail("OpenReservationMailTemplate", model);
 
         mail.setTo(customer.getEmail());
-        mail.setSubject(subject);
+        mail.setSubject("Conferma prenotazione del libro " + book.getTitle());
         mail.setBody(body);
 
-        log.info("Reservation service email = " + mail.getTo());
+        log.info("Email di conferma prenotazione inviata a: " + mail.getTo());
 
         return mail;
     }
+
 
 
     public MailProperties buildClosedReservationMail(Reservation reservation) {
