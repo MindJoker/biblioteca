@@ -21,16 +21,17 @@ import java.util.List;
 public class Customer extends BaseEntity {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="first_name",nullable = false)
+    @Column(name="FIRST_NAME",nullable = false)
     private String firstName;
 
-    @Column(name="last_name",nullable = false)
+    @Column(name="LAST_NAME",nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(name = "EMAIL", nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "customer")

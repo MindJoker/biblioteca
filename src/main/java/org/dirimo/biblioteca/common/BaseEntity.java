@@ -1,7 +1,6 @@
 package org.dirimo.biblioteca.common;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -12,22 +11,22 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @JsonIgnore
-    @Column(name="created_at",nullable = false, updatable = false)
+
+    @Column(name="CREATED_AT",nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    @JsonIgnore
-    @Column(name = "updated_at")
+
+    @Column(name = "UPDATED_AT")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    @JsonIgnore
-    @Column(name="created_by",updatable = false)
+
+    @Column(name="CREATED_BY",updatable = false)
     private String createdBy;
 
-    @JsonIgnore
-    @Column(name = "updated_by")
+
+    @Column(name = "UPDATED_BY")
     private String updatedBy;
 
     @Version

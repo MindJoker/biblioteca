@@ -21,14 +21,15 @@ import java.util.List;
 public class Shelf extends BaseEntity {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "NAME", nullable = false, length = 100)
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "area_id")
+    @JoinColumn(name = "AREA_ID")
     private Area area;
 
     @OneToMany(mappedBy = "shelf")

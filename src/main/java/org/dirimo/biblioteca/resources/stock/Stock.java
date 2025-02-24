@@ -17,17 +17,18 @@ import org.dirimo.biblioteca.common.BaseEntity;
 public class Stock extends BaseEntity {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "book_id", unique = true, nullable = false)
+    @JoinColumn(name = "BOOK_ID", unique = true, nullable = false)
     private Book book;
 
-    @Column(name = "totale_copie", columnDefinition = "int default 1", nullable = false)
+    @Column(name = "TOTALE_COPIE", columnDefinition = "int default 1", nullable = false)
     private int totalCopies;
 
-    @Column(name = "copie_disponibili", nullable = false)
+    @Column(name = "COPIE_DISPONIBILI", nullable = false)
     private int availableCopies;
 
     public void handleQuantity(int quantity) {

@@ -20,7 +20,7 @@ public class ReservationScheduler {
     private final ReservationRepository reservationRepository;
     private final EmailTemplateService emailTemplateService;
 
-    @Scheduled(cron = "0 41 22 * * ?")
+    @Scheduled(cron = "0 41 9 * * ?")
     public void sendReminderEmails() {
         System.out.println("Esecuzione del metodo sendReminderEmails() - " + LocalDate.now());
         MailProperties mail = new MailProperties();
@@ -30,6 +30,7 @@ public class ReservationScheduler {
         List<Reservation> expiringReservations = reservationRepository.findByResEndDate(tomorrow);
 
         for (Reservation reservation : expiringReservations) {
+            System.out.println("Esecuzione di for con Reservation reservation : expiringReservations - " + LocalDate.now());
             try {
 
                 String userEmail = reservation.getCustomer().getEmail();

@@ -24,34 +24,29 @@ public class Reservation extends BaseEntity {
 
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = false)
-//    private String username;
-//
-//    @Column(nullable = false)
-//    private String email;
-
-    @Column(name = "data_start", nullable = false)
+    @Column(name = "DATA_START", nullable = false)
     private LocalDate resStartDate;
 
-    @Column(name = "data_end")
+    @Column(name = "DATA_END")
     private LocalDate resEndDate;
 
-    @Column(name = "status")
+    @Column(name = "STATUS")
     private ReservationStatus status;
 
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "NOTES", columnDefinition = "TEXT")
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "book_id", referencedColumnName = "id")
+    @JoinColumn(name = "BOOK_ID", referencedColumnName = "id")
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "id", unique = true)
     private Customer customer;
 
     @Override

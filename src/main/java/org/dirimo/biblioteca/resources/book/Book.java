@@ -23,29 +23,31 @@ import java.util.List;
 public class Book extends BaseEntity {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 13)
+    @Column(name = "ISBN", nullable = false, unique = true, length = 13)
     private String isbn;
 
-    @Column(nullable = false)
+    @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(name = "AUTHOR", nullable = false)
     private String author;
 
-    @Column(nullable = false)
+    @Column(name = "YEAR", nullable = false)
     private Integer year;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "GENRE", nullable = false, length = 100)
     private String genre;
 
-    @Column(nullable = false)
+    @Column(name = "PUBLISHER", nullable = false)
     private String publisher;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "LANGUAGE", nullable = false, length = 50)
     private String language;
+
 
     @OneToMany(mappedBy = "book")
     @JsonIgnore
@@ -56,7 +58,7 @@ public class Book extends BaseEntity {
     private List<Reservation> reservation;
 
     @ManyToOne
-    @JoinColumn(name = "shelf_id")
+    @JoinColumn(name = "SHELF_ID")
     private Shelf shelf;
 
 
