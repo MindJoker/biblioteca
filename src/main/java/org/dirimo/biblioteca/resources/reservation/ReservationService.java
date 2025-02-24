@@ -135,11 +135,11 @@ public class ReservationService {
                 .orElseThrow(() -> new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
 
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("customerName", customer.getFirstName());
-        model.put("bookTitle", book.getTitle());
-        model.put("resEndDate", reservation.getResEndDate());
-
+        Map<String, Object> model = Map.of(
+                "customerName", customer.getFirstName(),
+                "bookTitle", book.getTitle(),
+                "resEndDate", reservation.getResEndDate()
+        );
 
         String body = emailTemplateService.generateEmail("OpenReservationMailTemplate", model);
 
@@ -158,10 +158,11 @@ public class ReservationService {
         Book book = reservation.getBook();
 
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("customerName", reservation.getCustomer().getFirstName());
-        model.put("bookTitle", book.getTitle());
-        model.put("resEndDate", reservation.getResEndDate());
+        Map<String, Object> model = Map.of(
+                "customerName", reservation.getCustomer().getFirstName(),
+                "bookTitle", book.getTitle(),
+                "resEndDate", reservation.getResEndDate()
+        );
 
         String body = emailTemplateService.generateEmail("CloseReservationMailTemplate", model);
 

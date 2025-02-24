@@ -37,11 +37,12 @@ public class ReservationScheduler {
 
                 String subject = "Promemoria Prenotazione libro" + reservation.getBook().getTitle() + "- Biblioteca";
 
-                Map<String, Object> model = new HashMap<>();
 
-                model.put("customerName", reservation.getCustomer().getFirstName());
-                model.put("bookTitle", reservation.getBook().getTitle());
-                model.put("resEndDate", reservation.getResEndDate());
+                Map<String, Object> model = Map.of(
+                        "customerName", reservation.getCustomer().getFirstName(),
+                        "bookTitle", reservation.getBook().getTitle(),
+                        "resEndDate", reservation.getResEndDate()
+                );
 
                 String body = emailTemplateService.generateEmail("ReminderReservationMailTemplate", model);
 
