@@ -3,6 +3,8 @@ package org.dirimo.biblioteca.resources.reservation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dirimo.biblioteca.mail.MailService;
+import org.dirimo.biblioteca.resources.prototype.Prototype;
+import org.dirimo.biblioteca.resources.prototype.PrototypeRepository;
 import org.dirimo.biblioteca.resources.prototype.PrototypeService;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
@@ -38,6 +40,7 @@ public class ReservationService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final PrototypeService prototypeService;
     private final MailService mailService;
+    private final PrototypeRepository prototypeRepository;
 
     // Get all reservations
     public List<Reservation> getAll() {
@@ -125,9 +128,8 @@ public class ReservationService {
     }
 
 
-    public MailProperties buildOpenReservationMail(Reservation reservation) {
+    public void sendOpenReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
-
 
         Book book = bookRepository.findById(reservation.getBook().getId())
                 .orElseThrow(() -> new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
@@ -135,28 +137,38 @@ public class ReservationService {
         Customer customer = customerRepository.findById(reservation.getCustomer().getId())
                 .orElseThrow(() -> new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
 
+        Prototype prototype = prototypeRepository.findByName("OpenReservationMailTemplate")
+                .orElseThrow(() -> new RuntimeException("Template email non trovato: OpenReservationMailTemplate"));
 
+
+
+        //possibile exception se uno dei campi NULL
         Map<String, Object> model = Map.of(
                 "customerName", customer.getFirstName(),
                 "bookTitle", book.getTitle(),
                 "resEndDate", reservation.getResEndDate()
         );
 
-        //String body = prototypeService.compile("OpenReservationMailTemplate", model);
+        String body = prototypeService.compile(prototype, model);
+
 
         mail.setTo(customer.getEmail());
         mail.setSubject("Conferma prenotazione del libro " + book.getTitle());
-        //mail.setBody(body);
+        mail.setBody(body);
+
+        mailService.sendEmail(mail);
 
         log.info("Email di conferma prenotazione inviata a: " + mail.getTo());
 
-        return mail;
     }
 
-    public MailProperties buildClosedReservationMail(Reservation reservation) {
+    public void sendCloseReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
 
         Book book = reservation.getBook();
+
+        Prototype prototype = prototypeRepository.findByName("CloseReservationMailTemplate")
+                .orElseThrow(() -> new RuntimeException("Template email non trovato: CloseReservationMailTemplate"));
 
 
         Map<String, Object> model = Map.of(
@@ -165,15 +177,16 @@ public class ReservationService {
                 "resEndDate", reservation.getResEndDate()
         );
 
-        //String body = prototypeService.compile("CloseReservationMailTemplate", model);
+        String body = prototypeService.compile(prototype, model);
 
         mail.setTo(reservation.getCustomer().getEmail());
-        //mail.setBody(body);
+        mail.setBody(body);
         mail.setSubject("Conferma chiusura prenotazione del libro " + book.getTitle());
+
+        mailService.sendEmail(mail);
 
         log.info("Email di chiusura prenotazione inviata a: " + mail.getTo());
 
-        return mail;
     }
 
 
@@ -187,9 +200,12 @@ public class ReservationService {
         // Recupera le prenotazioni che scadono domani
         List<Reservation> expiringReservations = reservationRepository.findByResEndDate(tomorrow);
 
+        Prototype prototype = prototypeRepository.findByName("ReminderReservationMailTemplate")
+                .orElseThrow(() -> new RuntimeException("Template email non trovato: ReminderReservationMailTemplate"));
+
         for (Reservation reservation : expiringReservations) {
             System.out.println("Esecuzione di for con Reservation reservation : expiringReservations - " + LocalDate.now());
-            //reservationService.sendexpiringRemainderMail
+
             try {
 
                 String userEmail = reservation.getCustomer().getEmail();
@@ -203,11 +219,11 @@ public class ReservationService {
                         "resEndDate", reservation.getResEndDate()
                 );
 
-                //String body = prototypeService.compile("ReminderReservationMailTemplate", model);
+                String body = prototypeService.compile(prototype, model);
 
                 mail.setTo(userEmail);
                 mail.setSubject(subject);
-                //mail.setBody(body);
+                mail.setBody(body);
 
                 mailService.sendEmail(mail);
 

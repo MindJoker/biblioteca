@@ -2,11 +2,9 @@ package org.dirimo.biblioteca.resources.prototype;
 
 import lombok.RequiredArgsConstructor;
 
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.stereotype.Service;
-
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
@@ -17,17 +15,16 @@ import java.util.Optional;
 public class PrototypeService {
 
     private final PrototypeRepository prototypeRepository;
-
     private final VelocityEngine velocityEngine;
+
 
     public String compile(Prototype prototype, Map<String, Object> model) {
         try {
-            Template template = velocityEngine.getTemplate(prototype.getName());
+            String templateContent = prototype.getBodyString();
             VelocityContext context = new VelocityContext();
             model.forEach(context::put);
-
             StringWriter writer = new StringWriter();
-            template.merge(context, writer);
+            velocityEngine.evaluate(context, writer, prototype.getName(), templateContent);
             return writer.toString();
         } catch (Exception e) {
             throw new RuntimeException("Errore nella compilazione del template: " + prototype.getName(), e);

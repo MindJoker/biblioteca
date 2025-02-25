@@ -13,7 +13,7 @@ public class ReservationScheduler {
 
     private final ReservationService reservationService;
 
-    @Scheduled(cron = "0 41 9 * * ?")
+    @Scheduled(cron = "0 56 19 * * ?")
     public void sendReminder() {
         reservationService.sendReminderEmails();
         }
