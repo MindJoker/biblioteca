@@ -13,17 +13,21 @@ import org.springframework.stereotype.Component;
 public class ReservationListener {
 
     private final ReservationService reservationService;
-    private final MailService mailService;
+
 
     @EventListener
     public void onOpenReservationEvent(OpenReservationEvent event) {
-        MailProperties mail = reservationService.buildOpenReservationMail(event.getReservation());
-        mailService.sendEmail(mail);
+//        reservationService.sendOpenReservationMail;
+//        MailProperties mail = reservationService.buildOpenReservationMail(event.getReservation());
+//        mailService.sendEmail(mail);
     }
 
     @EventListener
     public void onCloseReservationEvent(ClosedReservationEvent event) {
-        MailProperties  mail = reservationService.buildClosedReservationMail(event.getReservation());
-        mailService.sendEmail(mail);
+//        reservationService.sendCloseReservationMail;
+//        MailProperties  mail = reservationService.buildClosedReservationMail(event.getReservation());
+//        mailService.sendEmail(mail);
     }
+
+
 }

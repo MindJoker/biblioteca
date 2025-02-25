@@ -2,7 +2,8 @@ package org.dirimo.biblioteca.resources.reservation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dirimo.biblioteca.mail.EmailTemplateService;
+import org.dirimo.biblioteca.mail.MailService;
+import org.dirimo.biblioteca.resources.prototype.PrototypeService;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
 import org.dirimo.biblioteca.resources.customer.Customer;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +36,8 @@ public class ReservationService {
     private final BookRepository bookRepository;
     private final CustomerRepository customerRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final EmailTemplateService emailTemplateService;
+    private final PrototypeService prototypeService;
+    private final MailService mailService;
 
     // Get all reservations
     public List<Reservation> getAll() {
@@ -141,11 +142,11 @@ public class ReservationService {
                 "resEndDate", reservation.getResEndDate()
         );
 
-        String body = emailTemplateService.generateEmail("OpenReservationMailTemplate", model);
+        //String body = prototypeService.compile("OpenReservationMailTemplate", model);
 
         mail.setTo(customer.getEmail());
         mail.setSubject("Conferma prenotazione del libro " + book.getTitle());
-        mail.setBody(body);
+        //mail.setBody(body);
 
         log.info("Email di conferma prenotazione inviata a: " + mail.getTo());
 
@@ -164,10 +165,10 @@ public class ReservationService {
                 "resEndDate", reservation.getResEndDate()
         );
 
-        String body = emailTemplateService.generateEmail("CloseReservationMailTemplate", model);
+        //String body = prototypeService.compile("CloseReservationMailTemplate", model);
 
         mail.setTo(reservation.getCustomer().getEmail());
-        mail.setBody(body);
+        //mail.setBody(body);
         mail.setSubject("Conferma chiusura prenotazione del libro " + book.getTitle());
 
         log.info("Email di chiusura prenotazione inviata a: " + mail.getTo());
@@ -175,4 +176,46 @@ public class ReservationService {
         return mail;
     }
 
+
+    //sendCloseReservationMail
+
+    public void sendReminderEmails() {
+        System.out.println("Esecuzione del metodo sendReminderEmails() - " + LocalDate.now());
+        MailProperties mail = new MailProperties();
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        // Recupera le prenotazioni che scadono domani
+        List<Reservation> expiringReservations = reservationRepository.findByResEndDate(tomorrow);
+
+        for (Reservation reservation : expiringReservations) {
+            System.out.println("Esecuzione di for con Reservation reservation : expiringReservations - " + LocalDate.now());
+            //reservationService.sendexpiringRemainderMail
+            try {
+
+                String userEmail = reservation.getCustomer().getEmail();
+
+                String subject = "Promemoria Prenotazione libro" + reservation.getBook().getTitle() + "- Biblioteca";
+
+
+                Map<String, Object> model = Map.of(
+                        "customerName", reservation.getCustomer().getFirstName(),
+                        "bookTitle", reservation.getBook().getTitle(),
+                        "resEndDate", reservation.getResEndDate()
+                );
+
+                //String body = prototypeService.compile("ReminderReservationMailTemplate", model);
+
+                mail.setTo(userEmail);
+                mail.setSubject(subject);
+                //mail.setBody(body);
+
+                mailService.sendEmail(mail);
+
+            } catch (Exception e) {
+                System.err.println("Errore nell'invio dell'email per la prenotazione ID: "
+                        + reservation.getId() + " - " + e.getMessage());
+            }
+
+        }
+    }
 }
