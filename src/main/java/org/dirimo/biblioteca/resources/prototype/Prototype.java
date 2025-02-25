@@ -1,5 +1,6 @@
 package org.dirimo.biblioteca.resources.prototype;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Prototype extends BaseEntity {
     private String name;
 
     @Lob
+    @JsonIgnore
     @Column(name = "BODY", columnDefinition = "MEDIUMBLOB")
     private byte[] body; //
 
@@ -35,7 +37,7 @@ public class Prototype extends BaseEntity {
     private PrototypeType type;
 
     // Getter personalizzato per ottenere il testo dal BLOB
-    public String getBodyAsString() {
+    public String getBodyString() {
         return (body != null) ? new String(body, StandardCharsets.UTF_8) : null;
     }
 

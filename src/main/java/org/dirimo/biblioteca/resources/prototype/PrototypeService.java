@@ -20,41 +20,43 @@ public class PrototypeService {
 
     private final VelocityEngine velocityEngine;
 
-    public String compile(Prototype prototypeName, Map<String, Object> model) {
-        Template template = velocityEngine.getTemplate(prototypeName.getName());
-        VelocityContext context = new VelocityContext();
+    public String compile(Prototype prototype, Map<String, Object> model) {
+        try {
+            Template template = velocityEngine.getTemplate(prototype.getName());
+            VelocityContext context = new VelocityContext();
+            model.forEach(context::put);
 
-        model.forEach(context::put);
-
-        StringWriter writer = new StringWriter();
-        template.merge(context, writer);
-
-        return writer.toString();
+            StringWriter writer = new StringWriter();
+            template.merge(context, writer);
+            return writer.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Errore nella compilazione del template: " + prototype.getName(), e);
+        }
     }
 
-    // Get all prototypes
-    public List<Prototype> getAll() {
-        return prototypeRepository.findAll();
-    }
-
-    // Get a prototype by ID
-    public Optional<Prototype> getById(Long id) {
-        return prototypeRepository.findById(id);
-    }
-
-    // Add a new prototype
     public Prototype create(Prototype prototype) {
         return prototypeRepository.save(prototype);
     }
 
-    //Update a prototype
-    public Prototype update(Long id, Prototype prototype) {
-        getById(id)
-                .orElseThrow(() -> new RuntimeException("Template con ID: " + id + " non trovato"));
+    public List<Prototype> getAll() {
+        return prototypeRepository.findAll();
+    }
+
+    public Optional<Prototype> getById(Long id) {
+        return prototypeRepository.findById(id);
+    }
+
+    public Prototype update(Long id, Prototype updatedPrototype) {
+        Prototype prototype = prototypeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prototype con ID: " + id + " non trovato"));
+
+        prototype.setName(updatedPrototype.getName());
+        prototype.setType(updatedPrototype.getType());
+        prototype.setBodyFromString(updatedPrototype.getBodyString());
+
         return prototypeRepository.save(prototype);
     }
 
-    // Delete a prototype
     public void delete(Long id) {
         prototypeRepository.deleteById(id);
     }
