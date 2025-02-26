@@ -1,4 +1,4 @@
-package org.dirimo.biblioteca.resources.prototype;
+package org.dirimo.biblioteca.resources.template;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -7,17 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dirimo.biblioteca.common.BaseEntity;
-import org.dirimo.biblioteca.resources.prototype.enumerated.PrototypeType;
+import org.dirimo.biblioteca.resources.template.enumerated.TemplateType;
 
 import java.nio.charset.StandardCharsets;
 
 @Entity
-@Table(name = "Prototypes")
+@Table(name = "Templates")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Prototype extends BaseEntity {
+public class Template extends BaseEntity {
 
     @Id
     @Column(name = "ID")
@@ -34,7 +34,7 @@ public class Prototype extends BaseEntity {
 
     @Column(name = "TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrototypeType type;
+    private TemplateType type;
 
     // Getter personalizzato per ottenere il testo dal BLOB
     public String getBodyString() {

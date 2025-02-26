@@ -3,9 +3,9 @@ package org.dirimo.biblioteca.resources.reservation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dirimo.biblioteca.mail.MailService;
-import org.dirimo.biblioteca.resources.prototype.Prototype;
-import org.dirimo.biblioteca.resources.prototype.PrototypeRepository;
-import org.dirimo.biblioteca.resources.prototype.PrototypeService;
+import org.dirimo.biblioteca.resources.template.Template;
+import org.dirimo.biblioteca.resources.template.TemplateRepository;
+import org.dirimo.biblioteca.resources.template.TemplateService;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
 import org.dirimo.biblioteca.resources.customer.Customer;
@@ -38,9 +38,9 @@ public class ReservationService {
     private final BookRepository bookRepository;
     private final CustomerRepository customerRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final PrototypeService prototypeService;
+    private final TemplateService templateService;
     private final MailService mailService;
-    private final PrototypeRepository prototypeRepository;
+    private final TemplateRepository templateRepository;
 
     // Get all reservations
     public List<Reservation> getAll() {
@@ -137,7 +137,7 @@ public class ReservationService {
         Customer customer = customerRepository.findById(reservation.getCustomer().getId())
                 .orElseThrow(() -> new RuntimeException("Cliente con id: " + reservation.getCustomer().getId() + " non trovato."));
 
-        Prototype prototype = prototypeRepository.findByName("OpenReservationMailTemplate")
+        Template template = templateRepository.findByName("OpenReservationMailTemplate")
                 .orElseThrow(() -> new RuntimeException("Template email non trovato: OpenReservationMailTemplate"));
 
 
@@ -149,7 +149,7 @@ public class ReservationService {
                 "resEndDate", reservation.getResEndDate()
         );
 
-        String body = prototypeService.compile(prototype, model);
+        String body = templateService.compile(template, model);
 
 
         mail.setTo(customer.getEmail());
@@ -167,7 +167,7 @@ public class ReservationService {
 
         Book book = reservation.getBook();
 
-        Prototype prototype = prototypeRepository.findByName("CloseReservationMailTemplate")
+        Template template = templateRepository.findByName("CloseReservationMailTemplate")
                 .orElseThrow(() -> new RuntimeException("Template email non trovato: CloseReservationMailTemplate"));
 
 
@@ -177,7 +177,7 @@ public class ReservationService {
                 "resEndDate", reservation.getResEndDate()
         );
 
-        String body = prototypeService.compile(prototype, model);
+        String body = templateService.compile(template, model);
 
         mail.setTo(reservation.getCustomer().getEmail());
         mail.setBody(body);
@@ -200,7 +200,7 @@ public class ReservationService {
         // Recupera le prenotazioni che scadono domani
         List<Reservation> expiringReservations = reservationRepository.findByResEndDate(tomorrow);
 
-        Prototype prototype = prototypeRepository.findByName("ReminderReservationMailTemplate")
+        Template template = templateRepository.findByName("ReminderReservationMailTemplate")
                 .orElseThrow(() -> new RuntimeException("Template email non trovato: ReminderReservationMailTemplate"));
 
         for (Reservation reservation : expiringReservations) {
@@ -219,7 +219,7 @@ public class ReservationService {
                         "resEndDate", reservation.getResEndDate()
                 );
 
-                String body = prototypeService.compile(prototype, model);
+                String body = templateService.compile(template, model);
 
                 mail.setTo(userEmail);
                 mail.setSubject(subject);
