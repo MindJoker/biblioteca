@@ -30,7 +30,7 @@ public class Template extends BaseEntity {
     @Lob
     @JsonIgnore
     @Column(name = "BODY", columnDefinition = "MEDIUMBLOB")
-    private byte[] body; //
+    private byte[] body;
 
     @Column(name = "TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
