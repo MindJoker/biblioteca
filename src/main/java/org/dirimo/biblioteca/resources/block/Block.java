@@ -1,13 +1,11 @@
 package org.dirimo.biblioteca.resources.block;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.dirimo.biblioteca.common.BaseEntity;
-
 import java.security.MessageDigest;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "Blocks")
@@ -31,14 +29,14 @@ public class Block extends BaseEntity {
     @Column(name = "DATA")
     private String data;
 
+    @JsonIgnore
     @Column(name = "TIMESTAMP")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
+    private long timestamp;
 
     public Block(String data, String previousHash) {
     this.data = data;
     this.previousHash = previousHash == null ? "0" : previousHash;
-    this.timestamp = LocalDateTime.now();
+    this.timestamp = System.currentTimeMillis();
     this.hash = calcHash();}
 
     public String calcHash() {

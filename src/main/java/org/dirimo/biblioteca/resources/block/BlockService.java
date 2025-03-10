@@ -39,6 +39,7 @@ public class BlockService {
             Block currentBlock = chain.get(i);
             Block previousBlock = chain.get(i - 1);
 
+
             if(!currentBlock.getHash().equals(currentBlock.calcHash())){
                 return false;
             }
@@ -51,7 +52,7 @@ public class BlockService {
     }
 
     public void resetBlockchain(){
-        blockRepository.deleteAll();
+        blockRepository.truncateTable();
         initializeBlockchain();
     }
 }
