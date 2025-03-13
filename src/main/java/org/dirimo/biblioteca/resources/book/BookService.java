@@ -24,6 +24,9 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    public List<Book> createBulk(List<Book> books) {
+        return bookRepository.saveAll(books);
+    }
 
 
     public Book update(Long id, Book book) {

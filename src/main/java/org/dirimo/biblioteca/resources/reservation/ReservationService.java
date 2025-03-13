@@ -190,7 +190,6 @@ public class ReservationService {
     }
 
 
-    //sendCloseReservationMail
 
     public void sendReminderEmails() {
         System.out.println("Esecuzione del metodo sendReminderEmails() - " + LocalDate.now());

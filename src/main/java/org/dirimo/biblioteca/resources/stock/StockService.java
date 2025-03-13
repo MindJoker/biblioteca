@@ -2,7 +2,6 @@ package org.dirimo.biblioteca.resources.stock;
 
 import lombok.RequiredArgsConstructor;
 import org.dirimo.biblioteca.resources.book.Book;
-import org.dirimo.biblioteca.resources.book.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -27,7 +27,7 @@ public class Book extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ISBN", nullable = false, unique = true, length = 13)
+    @Column(name = "ISBN", nullable = false, unique = true, length = 17)
     private String isbn;
 
     @Column(name = "TITLE", nullable = false)
@@ -47,6 +47,9 @@ public class Book extends BaseEntity {
 
     @Column(name = "LANGUAGE", nullable = false, length = 50)
     private String language;
+
+    @Column(name = "DESCRIPTION", columnDefinition = "TEXT")
+    private String description;
 
 
     @OneToMany(mappedBy = "book")

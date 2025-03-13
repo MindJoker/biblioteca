@@ -1,8 +1,6 @@
 package org.dirimo.biblioteca.resources.shelf;
 
 import lombok.RequiredArgsConstructor;
-import org.dirimo.biblioteca.resources.area.Area;
-import org.dirimo.biblioteca.resources.area.AreaRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +12,6 @@ import java.util.Optional;
 public class ShelfService {
 
     private final ShelfRepository shelfRepository;
-    private final AreaRepository areaRepository;
 
     @Value("${library.maxReservationPerUser}")
     private int maxReservation;
@@ -36,10 +33,6 @@ public class ShelfService {
 
     // Add a new shelf
     public Shelf create(Shelf shelf) {
-//        Long areaId = shelf.getArea().getId();
-//        Area area = areaRepository.findById(areaId)
-//                .orElseThrow(() -> new RuntimeException("Zona con id: " +areaId+ " non trovata."));
-//        shelf.setArea(area);
         return shelfRepository.save(shelf);
     }
 
