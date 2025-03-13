@@ -46,7 +46,7 @@ public class Reservation extends BaseEntity {
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "id")
     private Customer customer;
 
     @Override

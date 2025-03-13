@@ -94,7 +94,7 @@ public class ReservationService {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        applicationEventPublisher.publishEvent(new OpenReservationEvent(this, savedReservation));
+//        applicationEventPublisher.publishEvent(new OpenReservationEvent(this, savedReservation));
 
         return savedReservation;
     }
@@ -121,7 +121,7 @@ public class ReservationService {
         log.info("Hai riportato indietro il libro in " + diff + " giorni.");
 
 
-        applicationEventPublisher.publishEvent(new ClosedReservationEvent(this, reservation));
+//        applicationEventPublisher.publishEvent(new ClosedReservationEvent(this, reservation));
 
 
         return reservation;

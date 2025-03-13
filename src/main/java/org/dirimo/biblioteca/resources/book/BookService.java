@@ -1,6 +1,8 @@
 package org.dirimo.biblioteca.resources.book;
 
 import lombok.RequiredArgsConstructor;
+import org.dirimo.biblioteca.resources.stock.Stock;
+import org.dirimo.biblioteca.resources.stock.StockService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +12,7 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final StockService stockService;
 
 
     public List<Book> getAll() {
@@ -25,7 +28,18 @@ public class BookService {
     }
 
     public List<Book> createBulk(List<Book> books) {
-        return bookRepository.saveAll(books);
+        List<Book> savedBooks = bookRepository.saveAll(books); // Salva prima i libri
+
+        for (Book book : savedBooks) {
+            Stock stock = new Stock();
+            stock.setBook(book);
+            stock.setTotalCopies(5);
+            stock.setAvailableCopies(5);
+
+            stockService.create(stock); //
+        }
+
+        return savedBooks;
     }
 
 
