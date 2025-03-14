@@ -1,4 +1,4 @@
-package org.dirimo.biblioteca.activemq;
+package org.dirimo.biblioteca.config;
 
 import jakarta.jms.JMSException;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -10,6 +10,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 @Configuration
 @EnableJms
+
 public class ActiveMQConfig {
 
     @Value("${spring.artemis.broker-url}")

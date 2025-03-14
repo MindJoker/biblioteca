@@ -1,4 +1,4 @@
-package org.dirimo.biblioteca.activemq;
+package org.dirimo.biblioteca.jms;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class MessageController {
+public class JMSController {
 
-    private final MessageService messageService;
+    private final JMSService JMSService;
 
     @PostMapping("/send")
     public String sendMessage(@RequestBody String message) {
-        messageService.sendMessage(message);
+        JMSService.sendMessage(message);
         return "Message sent" + message;
     }
 }

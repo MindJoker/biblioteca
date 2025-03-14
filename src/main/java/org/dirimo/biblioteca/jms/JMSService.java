@@ -1,4 +1,4 @@
-package org.dirimo.biblioteca.activemq;
+package org.dirimo.biblioteca.jms;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jms.core.JmsTemplate;
@@ -6,8 +6,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MessageService {
-    private static final String QUEUE_NAME = "sample-queue";
+public class JMSService {
+
+    private static final String QUEUE_NAME = "reservation_history";
 
     private final JmsTemplate jmsTemplate;
 

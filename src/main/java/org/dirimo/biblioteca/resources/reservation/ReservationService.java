@@ -1,8 +1,12 @@
 package org.dirimo.biblioteca.resources.reservation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dirimo.biblioteca.jms.JMSService;
 import org.dirimo.biblioteca.mail.MailService;
+import org.dirimo.biblioteca.resources.reservation.dto.ReservationDTO;
 import org.dirimo.biblioteca.resources.template.Template;
 import org.dirimo.biblioteca.resources.template.TemplateRepository;
 import org.dirimo.biblioteca.resources.template.TemplateService;
@@ -12,13 +16,10 @@ import org.dirimo.biblioteca.resources.customer.Customer;
 import org.dirimo.biblioteca.resources.customer.CustomerRepository;
 import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction;
 import org.dirimo.biblioteca.resources.reservation.action.OpenReservationAction;
-import org.dirimo.biblioteca.resources.reservation.event.OpenReservationEvent;
 import org.dirimo.biblioteca.mail.MailProperties;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
-import org.dirimo.biblioteca.resources.reservation.event.ClosedReservationEvent;
 import org.dirimo.biblioteca.resources.stock.Stock;
 import org.dirimo.biblioteca.resources.stock.StockService;
-
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,7 @@ public class ReservationService {
     private final TemplateService templateService;
     private final MailService mailService;
     private final TemplateRepository templateRepository;
+    private final JMSService jmsService;
 
     // Get all reservations
     public List<Reservation> getAll() {
@@ -76,9 +78,13 @@ public class ReservationService {
         Reservation reservation = action.getReservation();
         LocalDate date = action.getDate();
 
-        Book book = bookRepository.findById(reservation.getBook().getId())
+        Book book = bookRepository.findByIdBookDetails(reservation.getBook().getId())
                 .orElseThrow(() ->
                         new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
+
+        Customer customer = customerRepository.findByIdCustomerDetails(reservation.getCustomer().getId())
+                .orElseThrow(() ->
+                        new RuntimeException("Customer con id: " + reservation.getCustomer().getId() + " non trovato."));
 
         Optional<Stock> stockOptional = stockService.getByBook(book);
         Stock stock = stockOptional.orElseThrow(() ->
@@ -89,10 +95,26 @@ public class ReservationService {
             throw new RuntimeException("Non ci sono copie disponibili per il libro con id: " + book.getId());
         }
 
-        reservation.setResStartDate(date);
         stock.handleQuantity(-1);
 
+        reservation.setBook(book);
+        reservation.setCustomer(customer);
+        reservation.setResStartDate(date);
+
         Reservation savedReservation = reservationRepository.save(reservation);
+
+        ReservationDTO reservationDTO = ReservationDTO.fromReservation(savedReservation);
+
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String reservationJson = objectMapper.writeValueAsString(reservationDTO);
+//            System.out.println(reservationJson);
+            jmsService.sendMessage(reservationJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 //        applicationEventPublisher.publishEvent(new OpenReservationEvent(this, savedReservation));
 
