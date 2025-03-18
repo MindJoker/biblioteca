@@ -20,13 +20,17 @@ public class CustomerService {
     }
 
     //Get a customer by ID
-    public Optional<Customer>getById(Long id) {
+    public Optional<Customer> getById(Long id) {
         return customerRepository.findById(id);
     }
 
     //Create a customer
     public Customer create(Customer customer) {
         return customerRepository.save(customer);
+    }
+
+    public List<Customer> createBulk(List<Customer> consumers) {
+        return customerRepository.saveAll(consumers);
     }
 
     // Update a customer

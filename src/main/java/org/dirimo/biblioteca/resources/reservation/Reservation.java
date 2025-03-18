@@ -1,6 +1,6 @@
 package org.dirimo.biblioteca.resources.reservation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import org.dirimo.biblioteca.resources.customer.Customer;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Entity
 @Table(name = "Reservations")

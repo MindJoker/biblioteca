@@ -8,6 +8,7 @@ import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction
 import org.dirimo.biblioteca.resources.reservation.action.OpenReservationAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @Slf4j
@@ -54,6 +55,12 @@ public class ReservationController {
     @ResponseStatus(HttpStatus.CREATED)
     public Reservation open(@RequestBody OpenReservationAction openReservationAction) {
         return reservationService.open(openReservationAction);
+    }
+
+    @PostMapping("/bulk")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Reservation> createBulk(@RequestBody List<OpenReservationAction> openReservationAction) {
+        return reservationService.createBulk(openReservationAction);
     }
 
 

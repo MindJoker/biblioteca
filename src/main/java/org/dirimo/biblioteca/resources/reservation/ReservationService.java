@@ -5,26 +5,29 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dirimo.biblioteca.jms.JMSService;
+import org.dirimo.biblioteca.mail.MailProperties;
 import org.dirimo.biblioteca.mail.MailService;
-import org.dirimo.biblioteca.resources.reservation.dto.ReservationDTO;
-import org.dirimo.biblioteca.resources.template.Template;
-import org.dirimo.biblioteca.resources.template.TemplateRepository;
-import org.dirimo.biblioteca.resources.template.TemplateService;
 import org.dirimo.biblioteca.resources.book.Book;
 import org.dirimo.biblioteca.resources.book.BookRepository;
 import org.dirimo.biblioteca.resources.customer.Customer;
 import org.dirimo.biblioteca.resources.customer.CustomerRepository;
 import org.dirimo.biblioteca.resources.reservation.action.CloseReservationAction;
 import org.dirimo.biblioteca.resources.reservation.action.OpenReservationAction;
-import org.dirimo.biblioteca.mail.MailProperties;
 import org.dirimo.biblioteca.resources.reservation.enumerated.ReservationStatus;
 import org.dirimo.biblioteca.resources.stock.Stock;
 import org.dirimo.biblioteca.resources.stock.StockService;
+import org.dirimo.biblioteca.resources.template.Template;
+import org.dirimo.biblioteca.resources.template.TemplateRepository;
+import org.dirimo.biblioteca.resources.template.TemplateService;
+import org.dirimo.commonlibrary.dto.BookDTO;
+import org.dirimo.commonlibrary.dto.CustomerDTO;
+import org.dirimo.commonlibrary.dto.ReservationDTO;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +47,46 @@ public class ReservationService {
     private final TemplateRepository templateRepository;
     private final JMSService jmsService;
 
+    public static ReservationDTO fromReservation(Reservation reservation) {
+        if (reservation == null) {
+            return null;
+        }
+
+
+        BookDTO bookDTO = null;
+        if (reservation.getBook() != null) {
+            bookDTO = new BookDTO(
+                    reservation.getBook().getId(),
+                    reservation.getBook().getIsbn(),
+                    reservation.getBook().getTitle(),
+                    reservation.getBook().getAuthor(),
+                    reservation.getBook().getYear(),
+                    reservation.getBook().getGenre(),
+                    reservation.getBook().getPublisher(),
+                    reservation.getBook().getLanguage(),
+                    reservation.getBook().getDescription()
+            );
+        }
+
+        CustomerDTO customerDTO = null;
+        if (reservation.getCustomer() != null) {
+            customerDTO = new CustomerDTO(
+                    reservation.getCustomer().getId(),
+                    reservation.getCustomer().getFirstName(),
+                    reservation.getCustomer().getLastName(),
+                    reservation.getCustomer().getEmail()
+            );
+        }
+
+        return new ReservationDTO(
+                reservation.getId(),
+                bookDTO,
+                customerDTO,
+                reservation.getResStartDate(),
+                reservation.getResEndDate()
+        );
+    }
+
     // Get all reservations
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
@@ -59,6 +102,15 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
+    public List<Reservation> createBulk(List<OpenReservationAction> actions) {
+        List<Reservation> reservations = new ArrayList<>();
+        for (OpenReservationAction action : actions) {
+            Reservation savedReservation = open(action);
+            reservations.add(savedReservation);
+        }
+        return reservations;
+    }
+
     // Update a reservation
     public Reservation update(Long id, Reservation reservation) {
         reservationRepository.findById(id)
@@ -71,18 +123,18 @@ public class ReservationService {
         reservationRepository.deleteById(id);
     }
 
-
     // Open a new reservation (fill in attributes)
     public Reservation open(OpenReservationAction action) {
 
         Reservation reservation = action.getReservation();
         LocalDate date = action.getDate();
 
-        Book book = bookRepository.findByIdBookDetails(reservation.getBook().getId())
+        Book book = bookRepository.findById(reservation.getBook().getId())
                 .orElseThrow(() ->
                         new RuntimeException("Libro con id: " + reservation.getBook().getId() + " non trovato."));
 
-        Customer customer = customerRepository.findByIdCustomerDetails(reservation.getCustomer().getId())
+
+        Customer customer = customerRepository.findById(reservation.getCustomer().getId())
                 .orElseThrow(() ->
                         new RuntimeException("Customer con id: " + reservation.getCustomer().getId() + " non trovato."));
 
@@ -103,7 +155,7 @@ public class ReservationService {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        ReservationDTO reservationDTO = ReservationDTO.fromReservation(savedReservation);
+        ReservationDTO reservationDTO = ReservationService.fromReservation(savedReservation);
 
 
         try {
@@ -149,7 +201,6 @@ public class ReservationService {
         return reservation;
     }
 
-
     public void sendOpenReservationMail(Reservation reservation) {
         MailProperties mail = new MailProperties();
 
@@ -161,7 +212,6 @@ public class ReservationService {
 
         Template template = templateRepository.findByName("OpenReservationMailTemplate")
                 .orElseThrow(() -> new RuntimeException("Template email non trovato: OpenReservationMailTemplate"));
-
 
 
         //possibile exception se uno dei campi NULL
@@ -210,8 +260,6 @@ public class ReservationService {
         log.info("Email di chiusura prenotazione inviata a: " + mail.getTo());
 
     }
-
-
 
     public void sendReminderEmails() {
         System.out.println("Esecuzione del metodo sendReminderEmails() - " + LocalDate.now());

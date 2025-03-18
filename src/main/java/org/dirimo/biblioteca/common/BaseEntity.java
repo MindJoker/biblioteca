@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
 
-    @Column(name="CREATED_AT",nullable = false, updatable = false)
+    @Column(name = "CREATED_AT", nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
@@ -24,7 +24,7 @@ public abstract class BaseEntity {
     private LocalDateTime updatedAt;
 
 
-    @Column(name="CREATED_BY",updatable = false)
+    @Column(name = "CREATED_BY", updatable = false)
     private String createdBy;
 
 
