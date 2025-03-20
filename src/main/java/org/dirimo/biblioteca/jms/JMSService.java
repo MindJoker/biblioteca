@@ -15,4 +15,8 @@ public class JMSService {
     public void sendMessage(String message) {
         jmsTemplate.convertAndSend(QUEUE_NAME, message);
     }
+
+    //creare wrapper event publisher+jms
+
+    //classmoduleevent(Object)
 }

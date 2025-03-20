@@ -38,7 +38,6 @@ public class ReservationController {
         return reservationService.create(reservation);
     }
 
-
     @PutMapping("/{id}")
     public Reservation update(@PathVariable Long id, @RequestBody Reservation reservation) {
         return reservationService.update(id, reservation);
@@ -46,10 +45,8 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-
         reservationService.delete(id);
     }
-
 
     @PostMapping("/open/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -62,7 +59,6 @@ public class ReservationController {
     public List<Reservation> createBulk(@RequestBody List<OpenReservationAction> openReservationAction) {
         return reservationService.createBulk(openReservationAction);
     }
-
 
     @PostMapping("/close/{id}")
     public Reservation close(@PathVariable Long id, @RequestBody CloseReservationAction closeReservationAction) {

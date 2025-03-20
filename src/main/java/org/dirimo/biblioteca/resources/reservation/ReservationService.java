@@ -22,6 +22,8 @@ import org.dirimo.biblioteca.resources.template.TemplateService;
 import org.dirimo.commonlibrary.dto.BookDTO;
 import org.dirimo.commonlibrary.dto.CustomerDTO;
 import org.dirimo.commonlibrary.dto.ReservationDTO;
+import org.dirimo.commonlibrary.event.EventType;
+import org.dirimo.commonlibrary.event.GenericModuleEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -155,20 +157,9 @@ public class ReservationService {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        ReservationDTO reservationDTO = ReservationService.fromReservation(savedReservation);
+        applicationEventPublisher
+                .publishEvent(new GenericModuleEvent<>(this, EventType.OPENED, savedReservation));
 
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            String reservationJson = objectMapper.writeValueAsString(reservationDTO);
-//            System.out.println(reservationJson);
-            jmsService.sendMessage(reservationJson);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-//        applicationEventPublisher.publishEvent(new OpenReservationEvent(this, savedReservation));
 
         return savedReservation;
     }
@@ -195,7 +186,8 @@ public class ReservationService {
         log.info("Hai riportato indietro il libro in " + diff + " giorni.");
 
 
-//        applicationEventPublisher.publishEvent(new ClosedReservationEvent(this, reservation));
+//                applicationEventPublisher
+//                .publishEvent(new GenericModuleEvent<>(this, EventType.CLOSED, reservation));
 
 
         return reservation;
@@ -301,6 +293,21 @@ public class ReservationService {
                         + reservation.getId() + " - " + e.getMessage());
             }
 
+        }
+    }
+
+    public void sendOpenReservationJMS(Reservation reservation) {
+
+        ReservationDTO reservationDTO = ReservationService.fromReservation(reservation);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String reservationJson = objectMapper.writeValueAsString(reservationDTO);
+//            System.out.println(reservationJson);
+            jmsService.sendMessage(reservationJson);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
